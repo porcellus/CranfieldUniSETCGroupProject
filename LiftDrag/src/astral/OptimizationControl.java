@@ -11,7 +11,7 @@ import session.OptimizationResult;
  *
  * @author madfist
  */
-public abstract class OptimizationControl {
+public interface OptimizationControl {
     public abstract OptimizationResult readResults(String s1, String  s2);
     public abstract void startSession(String username, String password);
     public abstract void stopSession();

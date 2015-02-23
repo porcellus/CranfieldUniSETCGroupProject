@@ -11,7 +11,7 @@ import session.OptimizationResult;
  *
  * @author madfist
  */
-public abstract class ParameterSetters {
+public interface ParameterSetters {
     public abstract void setParameters(OptimizationResult result);    
     public abstract void setParameters(double t, double r, double th);
 }

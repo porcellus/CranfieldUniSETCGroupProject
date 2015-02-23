@@ -9,7 +9,7 @@ package session;
  *
  * @author madfist
  */
-public abstract class SessionInfo {
+public interface SessionInfo {
     public abstract String getPassHash();
     public abstract String getSessionName();
 }

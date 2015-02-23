@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author madfist
  */
-public abstract class Logging {
+public interface Logging {
     public abstract List<OptimizationResult> getLog();    
     public abstract List<OptimizationResult> getLog(int a, int b);    
     public abstract void logResult(OptimizationResult r);
