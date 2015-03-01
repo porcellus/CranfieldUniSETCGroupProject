@@ -25,32 +25,57 @@ public class AstralControl implements OptimizationControl {
 
     @Override
     public void startSession(String username, String password) {
-        JSch jsch = new JSch();
+        System.out.println("Tunnel...");
+        JSch tunnelJSch = new JSch();
+        JSch mainJSch = new JSch();
+        UserInfo tunnelUserInfo = new AstralUserInfo(password);
+        UserInfo mainUserInfo = new AstralUserInfo(password);
+        try {
+            tunnelSession = tunnelJSch.getSession(username, host);            
+            tunnelSession.setUserInfo(tunnelUserInfo);
+            tunnelSession.connect(30000);
+            tunnelSession.setPortForwardingL(localport, astral, remoteport);
+        } catch (JSchException e) {
+            System.out.println("Tunnel: "+e);
+        }
+        
+        try { Thread.sleep(2000); } catch (Exception e) {}
         
         try {
-        session = jsch.getSession(username, host);
-        UserInfo userInfo = new AstralUserInfo(password);
+            System.out.println("Main...");
+            mainSession = tunnelSession = tunnelJSch.getSession(username, localhost, localport);
+            mainSession.setUserInfo(mainUserInfo);
+            mainSession.connect(30000);
+        } catch (JSchException e) {
+            System.out.println("MainSession: "+e);
+            return;
+        }
         
-        session.setUserInfo(userInfo);
-        session.connect(30000);
-        channel = session.openChannel("shell");
-        String command = "ls -la\n";
-        InputStream input = new ByteArrayInputStream(command.getBytes());
-        channel.setInputStream(input);
-        channel.setOutputStream(System.out);
-        channel.connect(30000);
-        } catch (JSchException je) {
-            System.out.println(je);
+        try {
+            mainChannel = mainSession.openChannel("shell");
+            String command = "ls -la\n";
+            InputStream input = new ByteArrayInputStream(command.getBytes());
+            mainChannel.setInputStream(input);
+            mainChannel.setOutputStream(System.out);
+            mainChannel.connect(30000);
+        } catch (JSchException e) {
+            System.out.println("MainChannel: "+e);
         }
     }
 
     @Override
     public void stopSession() {
-        channel.disconnect();
-        session.disconnect();
+        mainChannel.disconnect();
+        mainSession.disconnect();
+        tunnelSession.disconnect();
     }
     
-    private Channel channel;
-    private Session session;
+    private Session tunnelSession;
+    private Channel mainChannel;
+    private Session mainSession;
     private final static String host = "hpcgate.cranfield.ac.uk";
+    private final static String localhost = "127.0.0.1";
+    private final static String astral = "hpclogin-1.central.cranfield.ac.uk";
+    private final static int localport = 18022;
+    private final static int remoteport = 22;
 }
