@@ -25,32 +25,45 @@ public class AstralControl implements OptimizationControl {
 
     @Override
     public void startSession(String username, String password) {
+        jsch = new JSch();
+        openTunnelSession(username, password);
+        openMainSession(username, password);
+        openShell();
+    }
+
+    @Override
+    public void stopSession() {
+        if (mainChannel != null) mainChannel.disconnect();
+        if (mainSession != null) mainSession.disconnect();
+        if (tunnelSession != null) tunnelSession.disconnect();
+    }
+    
+    private void openTunnelSession(String username, String password) {
         System.out.println("Tunnel...");
-        JSch tunnelJSch = new JSch();
-        JSch mainJSch = new JSch();
-        UserInfo tunnelUserInfo = new AstralUserInfo(password);
-        UserInfo mainUserInfo = new AstralUserInfo(password);
+        UserInfo userInfo = new AstralUserInfo(password);
         try {
-            tunnelSession = tunnelJSch.getSession(username, host);            
-            tunnelSession.setUserInfo(tunnelUserInfo);
+            tunnelSession = jsch.getSession(username, host);            
+            tunnelSession.setUserInfo(userInfo);
             tunnelSession.connect(30000);
             tunnelSession.setPortForwardingL(localport, astral, remoteport);
         } catch (JSchException e) {
             System.out.println("Tunnel: "+e);
         }
-        
-        try { Thread.sleep(2000); } catch (Exception e) {}
-        
+    }
+    
+    private void openMainSession(String username, String password) {
+        System.out.println("Main...");
+        UserInfo userInfo = new AstralUserInfo(password);
         try {
-            System.out.println("Main...");
-            mainSession = tunnelSession = tunnelJSch.getSession(username, localhost, localport);
-            mainSession.setUserInfo(mainUserInfo);
+            mainSession = jsch.getSession(username, localhost, localport);
+            mainSession.setUserInfo(userInfo);
             mainSession.connect(30000);
         } catch (JSchException e) {
             System.out.println("MainSession: "+e);
-            return;
         }
-        
+    }
+    
+    private void openShell() {
         try {
             mainChannel = mainSession.openChannel("shell");
             String command = "ls -la\n";
@@ -62,14 +75,8 @@ public class AstralControl implements OptimizationControl {
             System.out.println("MainChannel: "+e);
         }
     }
-
-    @Override
-    public void stopSession() {
-        mainChannel.disconnect();
-        mainSession.disconnect();
-        tunnelSession.disconnect();
-    }
     
+    private JSch jsch;
     private Session tunnelSession;
     private Channel mainChannel;
     private Session mainSession;
