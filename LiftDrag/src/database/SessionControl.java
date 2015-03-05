@@ -11,7 +11,6 @@ import session.*;
  *
  * @author madfist
  */
-//fake changes
 public interface SessionControl {
     public abstract Session createSession(String username, String password);    
     public abstract Session loginSession(String username, String password);
