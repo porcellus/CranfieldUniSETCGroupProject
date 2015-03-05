@@ -20,14 +20,16 @@ import java.util.Scanner;
 public class AstralControl implements OptimizationControl {    
     @Override
     public OptimizationResult readResults(String s1, String s2) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new OptimizationResult();
     }
 
     @Override
-    public void startSession(String username, String password) {
+    public void startSession(String user, String pass) {
         jsch = new JSch();
-        openTunnelSession(username, password);
-        openMainSession(username, password);
+        username = user;
+        password = pass;
+        openTunnelSession();
+        openMainSession();
         openShell();
     }
 
@@ -38,7 +40,7 @@ public class AstralControl implements OptimizationControl {
         if (tunnelSession != null) tunnelSession.disconnect();
     }
     
-    private void openTunnelSession(String username, String password) {
+    private void openTunnelSession() {
         System.out.println("Tunnel...");
         UserInfo userInfo = new AstralUserInfo(password);
         try {
@@ -51,7 +53,7 @@ public class AstralControl implements OptimizationControl {
         }
     }
     
-    private void openMainSession(String username, String password) {
+    private void openMainSession() {
         System.out.println("Main...");
         UserInfo userInfo = new AstralUserInfo(password);
         try {
@@ -80,6 +82,8 @@ public class AstralControl implements OptimizationControl {
     private Session tunnelSession;
     private Channel mainChannel;
     private Session mainSession;
+    private String username;
+    private String password;
     private final static String host = "hpcgate.cranfield.ac.uk";
     private final static String localhost = "127.0.0.1";
     private final static String astral = "hpclogin-1.central.cranfield.ac.uk";

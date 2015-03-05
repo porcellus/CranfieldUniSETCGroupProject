@@ -10,5 +10,13 @@ package session;
  * @author madfist
  */
 public class OptimizationResult {
+    public double angle;
+    public double camber;
+    public double thickness;
+    public double lift;
+    public double drag;
     
+    public double getLiftDrag() {
+        return lift / drag;
+    }
 }
