@@ -16,7 +16,30 @@ public class OptimizationResult {
     public double lift;
     public double drag;
     
+    public OptimizationResult() {
+        angle = 0.0;
+        camber = 1.0;
+        thickness = 0.05;
+        lift = 0.0;
+        drag = 0.0;
+    }
+    
+    public void set(double a, double c, double t, double l, double d) {
+        angle = a;
+        camber = c;
+        thickness = t;
+        lift = l;
+        drag = d;
+    }
+    
     public double getLiftDrag() {
         return lift / drag;
     }
+    
+    @Override
+    public String toString() {
+        return "Angle="+angle+" Camber%="+camber+" Thickness%="+thickness+
+               " Lift="+lift+" Drag"+drag;
+    }
+
 }
