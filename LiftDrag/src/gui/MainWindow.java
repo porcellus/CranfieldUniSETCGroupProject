@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import session.OptimizationResult;
 import visualize.WingPanel;
 
 /**
@@ -64,6 +65,9 @@ public class MainWindow extends JFrame {
         String pass = passField.getText();
         if (user.length() > 0 && pass.length() > 0) {
             optControl.startSession(user, pass);
+            lastResult = optControl.readResults("", "");
+            System.out.println(lastResult);
+            visualizer.setParameters(lastResult);
         } else {
             JOptionPane.showMessageDialog(
                     this, "Please give username or password",
@@ -72,9 +76,7 @@ public class MainWindow extends JFrame {
     }
     
     private void stop() {
-        visualizer.setParameters((int)(Math.random() * 20),
-                                 (int)(Math.random() * 20),
-                                 (int)(Math.random() * 30 - 15));
+        visualizer.setParameters(lastResult);
         optControl.stopSession();
     }
     
@@ -84,6 +86,7 @@ public class MainWindow extends JFrame {
     private final WingPanel visualizer;
     private final JTextField userField;
     private final JTextField passField;
+    private OptimizationResult lastResult;
     
     private final AbstractAction start = new AbstractAction("Start") {
         @Override

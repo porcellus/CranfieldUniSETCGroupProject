@@ -26,7 +26,18 @@ public class AstralControl implements OptimizationControl {
 
     @Override
     public OptimizationResult readResults(String s1, String s2) {
-        return new OptimizationResult();
+        String[] tokens = result.split(" ");
+        if (tokens.length != 6) {
+            return null;
+        }
+        double[] data = new double[5];
+        for (int i=0; i<5; ++i) {
+            String[] s = tokens[i].split("=");
+            data[i] = Double.parseDouble(s[1]);
+        }
+        OptimizationResult r = new OptimizationResult();
+        r.set(data[0], data[1], data[2], data[3], data[4]);
+        return r;
     }
 
     @Override
@@ -204,7 +215,7 @@ public class AstralControl implements OptimizationControl {
         System.out.println("Shell...");
         try {
             Channel channel = session.openChannel("exec");
-            String command = "java -jar LdOpt.jar -s 0.1\n";
+            String command = "java -jar LdOpt.jar -s 0.1 -a 0.1 -c 0.1\n";
             ((ChannelExec)channel).setCommand(command.getBytes());
             InputStream in = channel.getInputStream();
             //OutputStream out = channel.getOutputStream();
@@ -213,7 +224,7 @@ public class AstralControl implements OptimizationControl {
             channel.connect(30000);
             //try { Thread.sleep(30000); } catch (Exception e) {}
             while (scanner.hasNextLine()) {
-                System.out.println(scanner.nextLine());
+                result = scanner.nextLine();
             }
             channel.disconnect();
         } catch (JSchException e) {
@@ -228,6 +239,7 @@ public class AstralControl implements OptimizationControl {
     private Session mainSession;
     private String username;
     private String password;
+    private String result;
     private final static String host = "hpcgate.cranfield.ac.uk";
     private final static String localhost = "127.0.0.1";
     private final static String astral = "hpclogin-1.central.cranfield.ac.uk";
