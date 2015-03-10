@@ -82,8 +82,8 @@ public class MainWindow extends JFrame {
     private final JButton startButton;
     private final JButton stopButton;
     private final WingPanel visualizer;
-    private JTextField userField;
-    private JTextField passField;
+    private final JTextField userField;
+    private final JTextField passField;
     
     private final AbstractAction start = new AbstractAction("Start") {
         @Override

@@ -35,10 +35,23 @@ public class AstralControl implements OptimizationControl {
         username = user;
         password = pass;
         openTunnelSession();
-        openMainSession();
-        File jar = new File("LiftDrag.jar");
-        //sendFile(jar);
-        openShell();
+        //openMainSession();
+        File jar = new File("../LdOpt/dist/LdOpt.jar");
+        if (!jar.exists()) {
+            System.out.println("No executable");
+            stopSession();
+            return;
+        }
+        File lib = new File("../LdOpt/dist/lib/commons-cli-1.2.jar");
+        if (!lib.exists()) {
+            System.out.println("No executable");
+            stopSession();
+            return;
+        }
+        sendFile(jar, jar.getName(), tunnelSession);
+        remoteMakeDir("lib", tunnelSession);
+        sendFile(lib, "lib/"+lib.getName(), tunnelSession);
+        openShell(tunnelSession);
     }
 
     @Override
@@ -76,15 +89,15 @@ public class AstralControl implements OptimizationControl {
         }
     }
 
-    private void sendFile(File localFile) {
+    private void sendFile(File localFile, String rFile, Session session) {
         System.out.println("File...");
         try {
-            mainChannel = mainSession.openChannel("exec");
-            ((ChannelExec) mainChannel).setCommand("scp -p -t "+localFile.getName());
-            OutputStream out = mainChannel.getOutputStream();
-            InputStream in = mainChannel.getInputStream();
+            Channel channel = session.openChannel("exec");
+            ((ChannelExec) channel).setCommand("scp -p -t "+rFile);
+            OutputStream out = channel.getOutputStream();
+            InputStream in = channel.getInputStream();
 
-            mainChannel.connect();
+            channel.connect();
             
             if (checkAck(in) != 0) {
                 System.out.println("something's not rigth");
@@ -92,7 +105,7 @@ public class AstralControl implements OptimizationControl {
             }
             System.out.println("1");
             //timestamp
-            String cmd = "T " + (localFile.lastModified()/1000) + " 0 " +
+            String cmd = "T" + (localFile.lastModified()/1000) + " 0 " +
                                 (localFile.lastModified()/1000) + " 0\n";
             out.write(cmd.getBytes());
             out.flush();
@@ -104,7 +117,8 @@ public class AstralControl implements OptimizationControl {
             System.out.println("2");
             //size
             long filesize = localFile.length();
-            cmd = "C0644 " + filesize + " " + localFile.getName();
+            cmd = "C0644 " + filesize + " " + localFile.getName()+"\n";
+            System.out.print("size: "+filesize+" cmd: "+cmd);
             out.write(cmd.getBytes());
             out.flush();
             
@@ -135,7 +149,7 @@ public class AstralControl implements OptimizationControl {
             }
             System.out.println("4");
             out.close();
-            mainChannel.disconnect();
+            channel.disconnect();
         } catch (JSchException e) {
             System.out.println("sendFile - JSch:" + e);
         } catch (IOException e) {
@@ -172,24 +186,45 @@ public class AstralControl implements OptimizationControl {
 
         return b;
     }
+    
+    private void remoteMakeDir(String dir, Session session) {
+        System.out.println("Dir...");
+        try {
+            Channel channel = session.openChannel("exec");
+            String cmd = "mkdir "+dir+"\n";
+            ((ChannelExec)channel).setCommand(cmd);
+            channel.connect();
+            channel.disconnect();
+        } catch (JSchException e) {
+            System.out.println("Exec: " + e);
+        }
+    }
 
-    private void openShell() {
+    private void openShell(Session session) {
         System.out.println("Shell...");
         try {
-            mainChannel = mainSession.openChannel("shell");
-            String command = "ls | grep LiftDrag\n";
-            InputStream input = new ByteArrayInputStream(command.getBytes());
-            mainChannel.setInputStream(input);
-            mainChannel.setOutputStream(System.out);
-            mainChannel.connect(30000);
+            Channel channel = session.openChannel("exec");
+            String command = "java -jar LdOpt.jar -s 0.1\n";
+            ((ChannelExec)channel).setCommand(command.getBytes());
+            InputStream in = channel.getInputStream();
+            //OutputStream out = channel.getOutputStream();
+            
+            Scanner scanner = new Scanner(in);
+            channel.connect(30000);
+            //try { Thread.sleep(30000); } catch (Exception e) {}
+            while (scanner.hasNextLine()) {
+                System.out.println(scanner.nextLine());
+            }
+            channel.disconnect();
         } catch (JSchException e) {
-            System.out.println("MainChannel: " + e);
+            System.out.println("Exec: " + e);
+        } catch (IOException e) {
+            System.out.println("Exec - IO: " + e);
         }
     }
 
     private JSch jsch;
     private Session tunnelSession;
-    private Channel mainChannel;
     private Session mainSession;
     private String username;
     private String password;
