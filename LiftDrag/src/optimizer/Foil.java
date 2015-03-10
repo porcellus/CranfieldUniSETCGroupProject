@@ -142,6 +142,10 @@ public class Foil {
     }
 
     public void computeFlow(double thkinpt, double caminpt, double alfinp) { 
+        camval = caminpt / 25.0;
+        thkval = thkinpt / 25.0;
+        alfval = alfinp;
+                    
         getFreeStream () ;
         getCirc ();                   /* get circulation */
         genFlow () ;

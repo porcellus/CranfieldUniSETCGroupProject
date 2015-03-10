@@ -76,7 +76,7 @@ public class MainWindow extends JFrame {
     }
     
     private void stop() {
-        visualizer.setParameters(lastResult);
+        visualizer.setParameters(Math.random()*19+1,Math.random()*20,Math.random()*30-15);
         optControl.stopSession();
     }
     

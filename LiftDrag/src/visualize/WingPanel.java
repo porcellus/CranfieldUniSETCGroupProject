@@ -10,9 +10,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
-import java.lang.reflect.InvocationTargetException;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import optimizer.Foil;
 import session.OptimizationResult;
 
@@ -263,7 +261,7 @@ public class WingPanel extends JPanel implements Runnable, ParameterSetters {
                 ancol = -ancol;               /* MODS 27 JUL 99 */
 
             }
-            timer = 135 - (int) (.227 * f.vfsd / f.vconv);
+            timer = 135 - (int) (.227 * Foil.vfsd / Foil.vconv);
             // make the ball spin
         }
     }
