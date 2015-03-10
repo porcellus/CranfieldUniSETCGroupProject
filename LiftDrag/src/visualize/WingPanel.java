@@ -6,6 +6,7 @@
 package visualize;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -29,12 +30,13 @@ public class WingPanel extends JPanel implements Runnable, ParameterSetters {
 
     public WingPanel() {
         f = new Foil();
+        setPreferredSize(new Dimension(400, 200));
     }
 
-    @Override
-    public void update(Graphics g) {
-        paint(g);
-    }
+    //@Override
+    //public void update(Graphics g) {
+    //    paint(g);
+    //}
 
     @Override
     public void paint(Graphics g) {

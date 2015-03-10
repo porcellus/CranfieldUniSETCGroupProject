@@ -28,10 +28,12 @@ public class LiftDrag {
         options.addOption("C", "camber_max", true, "Camber in percentage of chord");
         options.addOption("A", "angle_max", true, "Angle of Attack");
         options.addOption("T", "thickness_max", true, "Thickness in percentage of chord");
+        options.addOption("s", "step", true, "Step size for optimizer");
         HelpFormatter help = new HelpFormatter();
         if (args.length > 0) {
-            double a = 0.0, c = 1.0, t = 0.1;
-            double A = 20.0, C = 20.0, T = 5.0;
+            double a = -20.0, c = -20.0, t = 1.0;
+            double A = 19.6, C = 19.6, T = 19.81;
+            double s = 0.1;
             CommandLineParser parser = new GnuParser();
             try {
                 CommandLine cmd = parser.parse(options, args);
@@ -57,15 +59,12 @@ public class LiftDrag {
                 if (cmd.hasOption("T")) {
                     T = Double.parseDouble(cmd.getOptionValue("T"));
                 }
-//                Solver solver = new Solver();
-//                solver.computeLiftDrag(a, c, t);
-//                System.out.println("L  : "+solver.getLift());
-//                System.out.println("D  : "+solver.getDrag());
-//                System.out.println("L/D: "+solver.getLiftDrag());
+                if (cmd.hasOption("s")) {
+                    s = Double.parseDouble(cmd.getOptionValue("s"));
+                }
                 Optimizer optimizer = new Optimizer();
-                optimizer.set(c, C, t, T, a, A, 0.01);
-                OptimizationResult result = optimizer.optimize();
-                System.out.println("Result: "+result);
+                optimizer.set(c, C, t, T, a, A, s);
+                optimizer.optimize();
             } catch (ParseException ex) {
                 System.out.println("invalid paramter input\n"+ex);
                 help.printHelp("LiftDrag [options]\nNo options opens the GUI", options);

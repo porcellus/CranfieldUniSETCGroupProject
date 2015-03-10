@@ -5,6 +5,9 @@
  */
 package session;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 /**
  *
  * @author madfist
@@ -38,8 +41,11 @@ public class OptimizationResult {
     
     @Override
     public String toString() {
-        return "Angle="+angle+" Camber%="+camber+" Thickness%="+thickness+
-               " Lift="+lift+" Drag"+drag;
+        NumberFormat f = new DecimalFormat("#0.0000");
+        return "Angle="+f.format(angle)+" Camber="+f.format(camber)+
+               " Thickness="+f.format(thickness)+
+               " Lift="+f.format(lift)+" Drag="+f.format(drag)+
+               " LD="+f.format(getLiftDrag());
     }
 
 }
