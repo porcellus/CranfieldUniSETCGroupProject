@@ -19,12 +19,12 @@ public class Session implements SessionInfo, Logging {
     private String passwordHash;
     private SessionControl control;
     private int id;
-    private float minangle;
-    private float maxangle;
-    private float minthickness;
-    private float maxthickness;
-    private float mincamber;
-    private float maxcamber;
+    private double minangle;
+    private double maxangle;
+    private double minthickness;
+    private double maxthickness;
+    private double mincamber;
+    private double maxcamber;
     
     public Session(String n, String pw, SessionControl ctrl, int ind) {
         name = n;
@@ -40,7 +40,7 @@ public class Session implements SessionInfo, Logging {
         id=ind;
     }
     
-    public Session(SessionControl ctrl, int id, String username, String pwd, float minangle, float maxangle, float minthickness, float maxthickness, float mincamber, float maxcamber){
+    public Session(SessionControl ctrl, int id, String username, String pwd, double minangle, double maxangle, double minthickness, double maxthickness, double mincamber, double maxcamber){
         this.id=id;
         this.name=username;
         this.passwordHash=pwd;
@@ -84,27 +84,27 @@ public class Session implements SessionInfo, Logging {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public float getMinangle() {
+    public double getMinangle() {
         return minangle;
     }
 
-    public float getMaxangle() {
+    public double getMaxangle() {
         return maxangle;
     }
 
-    public float getMinthickness() {
+    public double getMinthickness() {
         return minthickness;
     }
 
-    public float getMaxthickness() {
+    public double getMaxthickness() {
         return maxthickness;
     }
 
-    public float getMincamber() {
+    public double getMincamber() {
         return mincamber;
     }
 
-    public float getMaxcamber() {
+    public double getMaxcamber() {
         return maxcamber;
     }
 
@@ -112,7 +112,7 @@ public class Session implements SessionInfo, Logging {
         return id;
     }
     
-    public void setParameters(float minangle, float maxangle, float minthickness, float maxthickness, float mincamber, float maxcamber){
+    public void setParameters(double minangle, double maxangle, double minthickness, double maxthickness, double mincamber, double maxcamber){
         this.minangle=minangle;
         this.maxangle=maxangle;
         this.minthickness=minthickness;
