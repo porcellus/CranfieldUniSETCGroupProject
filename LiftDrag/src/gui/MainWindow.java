@@ -55,6 +55,7 @@ public class MainWindow extends JFrame {
         add(userpassPanel);
         add(buttonPanel);
         add(visualizer);
+        visualizer.start();
         pack();
     }
     
@@ -71,7 +72,9 @@ public class MainWindow extends JFrame {
     }
     
     private void stop() {
-        visualizer.start();
+        visualizer.setParameters((int)(Math.random() * 20),
+                                 (int)(Math.random() * 20),
+                                 (int)(Math.random() * 30 - 15));
         optControl.stopSession();
     }
     

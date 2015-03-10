@@ -13,5 +13,5 @@ import session.OptimizationResult;
  */
 public interface ParameterSetters {
     public abstract void setParameters(OptimizationResult result);    
-    public abstract void setParameters(double t, double r, double th);
+    public abstract void setParameters(double thickness, double camber, double angle);
 }
