@@ -58,3 +58,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 /LiftDrag/nbproject/private/
+/LiftDrag/build/
+/LiftDrag/dist/

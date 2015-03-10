@@ -135,8 +135,7 @@ public class Foil {
     public int nabs;
     public int ntr;
 
-    public void init() {
-        int i;
+    public Foil() {
         setDefaults () ;
         getFreeStream ();
         computeFlow (0,12,5) ;
@@ -157,6 +156,12 @@ public class Foil {
         if (camd < 0.0) alfd = - alfval ;
     //
         getDrag(clift); 
+        for (int ic = 0; ic <= nlnc; ++ic) {
+            for (int index = 0; index <= nptc; ++index) {
+                xpl[ic][index] = xm[ic][index];
+                ypl[ic][index] = ym[ic][index];
+            }
+        }
         dragCoeff = dragco ;
     }
  
@@ -191,7 +196,7 @@ public class Foil {
         radius  = rads * lconv;
     }
 
-    public void setDefaults() {
+    private void setDefaults() {
        arcor = 1 ;
        indrag = 1 ;
        recor = 1 ;
@@ -272,7 +277,7 @@ public class Foil {
        radmn = .05;   radmx = 5.0 ;
     }
 
-    public void getFreeStream() {    //  free stream conditions
+    private void getFreeStream() {    //  free stream conditions
         double hite,pvap,rgas,mu0 ;       /* MODS  19 Jan 00  whole routine*/
 
         g0 = 32.2 ;

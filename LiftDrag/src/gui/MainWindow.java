@@ -7,6 +7,7 @@ package gui;
 
 import astral.AstralControl;
 import astral.OptimizationControl;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -19,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import visualize.WingPanel;
 
 /**
  *
@@ -47,9 +49,12 @@ public class MainWindow extends JFrame {
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
         buttonPanel.add(startButton);
         buttonPanel.add(stopButton);
+        visualizer = new WingPanel();
+        
         
         add(userpassPanel);
         add(buttonPanel);
+        add(visualizer);
         pack();
     }
     
@@ -66,12 +71,14 @@ public class MainWindow extends JFrame {
     }
     
     private void stop() {
+        visualizer.start();
         optControl.stopSession();
     }
     
     private final OptimizationControl optControl;
     private final JButton startButton;
     private final JButton stopButton;
+    private final WingPanel visualizer;
     private JTextField userField;
     private JTextField passField;
     
