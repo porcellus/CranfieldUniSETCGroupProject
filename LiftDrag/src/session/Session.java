@@ -9,14 +9,14 @@ import database.SessionControl;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-
 /**
  *
  * @author madfist
  */
 public class Session implements SessionInfo, Logging {    
     private String name;
-    private byte[] passwordHash;
+    //private byte[] passwordHash;
+    private String passwordHash;
     private SessionControl control;
     private int id;
     private float minangle;
@@ -26,20 +26,24 @@ public class Session implements SessionInfo, Logging {
     private float mincamber;
     private float maxcamber;
     
-    public Session(String n, String pw, SessionControl ctrl) {
+    public Session(String n, String pw, SessionControl ctrl, int ind) {
         name = n;
-        try {
+        /*try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(pw.getBytes());
             passwordHash = md.digest();
         } catch (NoSuchAlgorithmException ex) {
             System.out.println("no md5");
-        }
+        }*/
+        passwordHash=pw;
         control = ctrl;
+        id=ind;
     }
     
-    public Session(SessionControl ctrl, int id, String username,float minangle, float maxangle, float minthickness, float maxthickness, float mincamber, float maxcamber){
+    public Session(SessionControl ctrl, int id, String username, String pwd, float minangle, float maxangle, float minthickness, float maxthickness, float mincamber, float maxcamber){
         this.id=id;
+        this.name=username;
+        this.passwordHash=pwd;
         this.minangle=minangle;
         this.maxangle=maxangle;
         this.minthickness=minthickness;
@@ -51,7 +55,8 @@ public class Session implements SessionInfo, Logging {
     
     @Override
     public String getPassHash() {        
-        return new String(passwordHash);
+        //return new String(passwordHash);
+        return passwordHash;
     }
 
     @Override
@@ -107,5 +112,12 @@ public class Session implements SessionInfo, Logging {
         return id;
     }
     
-
+    public void setParameters(float minangle, float maxangle, float minthickness, float maxthickness, float mincamber, float maxcamber){
+        this.minangle=minangle;
+        this.maxangle=maxangle;
+        this.minthickness=minthickness;
+        this.maxthickness=maxthickness;
+        this.mincamber=mincamber;
+        this.maxcamber=maxcamber;
+    }
 }
