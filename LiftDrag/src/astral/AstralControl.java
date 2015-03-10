@@ -41,7 +41,7 @@ public class AstralControl implements OptimizationControl, Runnable {
 
     @Override
     public OptimizationResult readResults() {
-        System.out.println("READ");
+        //System.out.println("READ");
         OptimizationResult r = new OptimizationResult();
         if (result != null) {
             String[] tokens = result.split(" ");
@@ -54,7 +54,6 @@ public class AstralControl implements OptimizationControl, Runnable {
                 data[i] = Double.parseDouble(s[1]);
             }
             r.set(data[0], data[1], data[2], data[3], data[4]);
-            System.out.println("SET");
         }
         return r;
     }

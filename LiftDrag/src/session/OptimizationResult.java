@@ -22,7 +22,7 @@ public class OptimizationResult {
     public OptimizationResult() {
         angle = 0.0;
         camber = 1.0;
-        thickness = 1.0;
+        thickness = 10.0;
         lift = 0.0;
         drag = 0.0;
     }

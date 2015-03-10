@@ -10,6 +10,7 @@ import astral.OptimizationControl;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -19,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import session.OptimizationResult;
 import session.Session;
 import visualize.WingPanel;
@@ -27,7 +29,7 @@ import visualize.WingPanel;
  *
  * @author madfist
  */
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements ActionListener {
     public MainWindow()
     {
         optControl = new AstralControl();
@@ -57,6 +59,9 @@ public class MainWindow extends JFrame {
         add(visualizer);
         visualizer.start();
         pack();
+        
+        Timer timer = new Timer(100, this);
+        timer.start();
     }
     
     private void start() {
@@ -80,12 +85,6 @@ public class MainWindow extends JFrame {
         optControl.stopSession();
     }
     
-    @Override
-    public void paint(Graphics g) {
-        visualizer.setParameters(optControl.readResults());
-        super.paint(g);
-    }
-    
     private final OptimizationControl optControl;
     private final JButton startButton;
     private final JButton stopButton;
@@ -107,4 +106,10 @@ public class MainWindow extends JFrame {
             stop();
         }
     };
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        visualizer.setParameters(optControl.readResults());
+        repaint();
+    }
 }
