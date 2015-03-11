@@ -5,13 +5,15 @@
  */
 package ldopt;
 
+import java.io.PrintStream;
+
 
 /**
  *
  * @author a.koleszar@cranfield.ac.uk
  */
 public class Optimizer {
-    public Optimizer() {
+    public Optimizer(PrintStream o) {
         minCamber = -20.0;
         maxCamber = 19.6;
         minThickness = 1.0;
@@ -19,6 +21,7 @@ public class Optimizer {
         minAngle = -20.0;
         maxAngle = 19.6;
         stepSize = 0.1;
+        out = o;
     }
     
     public void set(double minc, double maxc, double mint, double maxt,
@@ -40,30 +43,40 @@ public class Optimizer {
         double a = minAngle;
         double c = minCamber;
         double t = maxThickness;
+        int i = 0;
         for (; t>minThickness; t-=stepSize) {
             solver.computeLiftDrag(a, c, t);
             if (solver.getLiftDrag() >= maxLiftDrag && solver.getDrag() > 0.0) {
                 maxLiftDrag = solver.getLiftDrag();
                 result.set(a, c, t, solver.getLift(), solver.getDrag());
             }
+            if (i++ % 100 == 0) {
+                out.println(result);
+            }
         }
-        System.out.println(result);
+        out.println(result);
         for (; c<=maxCamber; c+=stepSize) {
             solver.computeLiftDrag(a, c, result.thickness);
             if (solver.getLiftDrag() >= maxLiftDrag && solver.getDrag() > 0.0) {
                 maxLiftDrag = solver.getLiftDrag();
                 result.set(a, c, result.thickness, solver.getLift(), solver.getDrag());
             }
+            if (i++ % 100 == 0) {
+                out.println(result);
+            }
         }
-        System.out.println(result);
+        out.println(result);
         for (; a<=maxAngle; a+=stepSize) {
             solver.computeLiftDrag(a, result.camber, result.thickness);
             if (solver.getLiftDrag() >= maxLiftDrag && solver.getDrag() > 0.0) {
                 maxLiftDrag = solver.getLiftDrag();
                 result.set(a, result.camber, result.thickness, solver.getLift(), solver.getDrag());
             }
+            if (i++ % 100 == 0) {
+                out.println(result);
+            }
         }
-        System.out.println(result);
+        out.println(result);
         return result;
     }
     
@@ -74,5 +87,6 @@ public class Optimizer {
     private double minAngle;
     private double maxAngle;
     private double stepSize;
+    private PrintStream out;
 }
 

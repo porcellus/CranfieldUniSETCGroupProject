@@ -5,6 +5,10 @@
  */
 package ldopt;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import org.apache.commons.cli.*;
 /**
  *
@@ -25,11 +29,13 @@ public class Main {
         options.addOption("A", "angle_max", true, "Angle of Attack");
         options.addOption("T", "thickness_max", true, "Thickness in percentage of chord");
         options.addOption("s", "step", true, "Step size for optimizer");
+        options.addOption("o", "output", true, "Output filename");
         HelpFormatter help = new HelpFormatter();
         if (args.length > 0) {
             double a = -20.0, c = -20.0, t = 1.0;
             double A = 19.6, C = 19.6, T = 19.81;
             double s = 0.1;
+            String o = null;
             CommandLineParser parser = new GnuParser();
             try {
                 CommandLine cmd = parser.parse(options, args);
@@ -58,7 +64,20 @@ public class Main {
                 if (cmd.hasOption("s")) {
                     s = Double.parseDouble(cmd.getOptionValue("s"));
                 }
-                Optimizer optimizer = new Optimizer();
+                if (cmd.hasOption("o")) {
+                    o = cmd.getOptionValue("o");
+                }
+                Optimizer optimizer;
+                if (o != null) {
+                    File f = new File(o);
+                    try {
+                        optimizer = new Optimizer(new PrintStream(f));
+                    } catch (FileNotFoundException e) {
+                        optimizer = new Optimizer(System.out);
+                    }
+                } else {
+                    optimizer = new Optimizer(System.out);
+                }
                 optimizer.set(c, C, t, T, a, A, s);
                 optimizer.optimize();
             } catch (ParseException ex) {
