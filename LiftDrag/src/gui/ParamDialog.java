@@ -21,7 +21,7 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
 import session.Session;
-import database.SQLiteConnexion;
+import database.SQLiteConnection;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;

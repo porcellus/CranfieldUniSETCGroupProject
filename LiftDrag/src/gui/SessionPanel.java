@@ -216,7 +216,7 @@ public class SessionPanel extends JPanel implements ActionListener
 			if(sessionRunning == false)
 			{
 				// TODO: pass credentials and start session
-				optControl.startSession("gewsd", "gesdv");
+				//optControl.startSession("gewsd", "gesdv");
 				
 				sessionRunning = true;
 				startButton.setText("Stop");

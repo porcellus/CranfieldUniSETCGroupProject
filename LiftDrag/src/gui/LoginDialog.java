@@ -20,7 +20,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import database.SQLiteConnexion;
+import database.SQLiteConnection;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
