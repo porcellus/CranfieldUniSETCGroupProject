@@ -7,62 +7,72 @@ package astral;
 
 import session.OptimizationResult;
 import com.jcraft.jsch.*;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
+import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.Scanner;
-import java.util.logging.Level;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 /**
  *
  * @author madfist
  */
-public class AstralControl implements OptimizationControl {
+public class AstralControl implements OptimizationControl, Runnable {
+    public AstralControl() {
+        JLabel userLabel = new JLabel("username");
+        JLabel passLabel = new JLabel("password");
+        userField = new JTextField();
+        passField = new JPasswordField();
+        loginPanel = new JPanel(new GridLayout(2, 2));
+        loginPanel.add(userLabel);
+        loginPanel.add(userField);
+        loginPanel.add(passLabel);
+        loginPanel.add(passField);
+        
+        result = null;
+    }
 
     @Override
-    public OptimizationResult readResults(String s1, String s2) {
-        String[] tokens = result.split(" ");
-        if (tokens.length != 6) {
-            return null;
-        }
-        double[] data = new double[5];
-        for (int i=0; i<5; ++i) {
-            String[] s = tokens[i].split("=");
-            data[i] = Double.parseDouble(s[1]);
-        }
+    public OptimizationResult readResults() {
+        //System.out.println("READ");
         OptimizationResult r = new OptimizationResult();
-        r.set(data[0], data[1], data[2], data[3], data[4]);
+        if (result != null) {
+            String[] tokens = result.split(" ");
+            if (tokens.length != 6) {
+                return null;
+            }
+            double[] data = new double[5];
+            for (int i=0; i<5; ++i) {
+                String[] s = tokens[i].split("=");
+                data[i] = Double.parseDouble(s[1]);
+            }
+            r.set(data[0], data[1], data[2], data[3], data[4]);
+        }
         return r;
     }
 
     @Override
-    public void startSession(String user, String pass) {
+    public void startSession(session.Session s) {
         jsch = new JSch();
-        username = user;
-        password = pass;
-        openTunnelSession();
-        //openMainSession();
-        File jar = new File("../LdOpt/dist/LdOpt.jar");
-        if (!jar.exists()) {
-            System.out.println("No executable");
-            stopSession();
+        optSession = s;
+        int ans = JOptionPane.showConfirmDialog(null, loginPanel,
+                              "Login to Astral", JOptionPane.OK_CANCEL_OPTION);
+        if (ans == JOptionPane.OK_OPTION) {
+            username = userField.getText();
+            password = passField.getText();
+            //System.out.println("u "+username+" p "+password);
+        } else {
             return;
         }
-        File lib = new File("../LdOpt/dist/lib/commons-cli-1.2.jar");
-        if (!lib.exists()) {
-            System.out.println("No executable");
-            stopSession();
-            return;
-        }
-        sendFile(jar, jar.getName(), tunnelSession);
-        remoteMakeDir("lib", tunnelSession);
-        sendFile(lib, "lib/"+lib.getName(), tunnelSession);
-        openShell(tunnelSession);
+        thread = new Thread(this);
+        thread.start();
     }
 
     @Override
@@ -73,6 +83,28 @@ public class AstralControl implements OptimizationControl {
         if (tunnelSession != null) {
             tunnelSession.disconnect();
         }
+    }
+
+    @Override
+    public void run() {        
+        openTunnelSession();
+        //openMainSession();
+        File jar = new File("../LdOpt/dist/LdOpt.jar");
+        if (!jar.exists()) {
+            System.out.println("No executable");
+            stopSession();
+            return;
+        }
+        File lib = new File("../LdOpt/dist/lib/commons-cli-1.2.jar");
+        if (!lib.exists()) {
+            System.out.println("No library");
+            stopSession();
+            return;
+        }
+        sendFile(jar, jar.getName(), tunnelSession);
+        remoteMakeDir("lib", tunnelSession);
+        sendFile(lib, "lib/"+lib.getName(), tunnelSession);
+        openShell(tunnelSession);
     }
 
     private void openTunnelSession() {
@@ -215,16 +247,21 @@ public class AstralControl implements OptimizationControl {
         System.out.println("Shell...");
         try {
             Channel channel = session.openChannel("exec");
-            String command = "java -jar LdOpt.jar -s 0.1 -a 0.1 -c 0.1\n";
+            String command = "java -jar LdOpt.jar -s 0.1"+
+                             " -a "+optSession.getMinangle()+
+                             " -A "+optSession.getMaxangle()+
+                             " -c "+optSession.getMincamber()+
+                             " -C "+optSession.getMaxangle()+
+                             " -t "+optSession.getMinthickness()+
+                             " -T "+optSession.getMaxthickness()+"\n";
             ((ChannelExec)channel).setCommand(command.getBytes());
             InputStream in = channel.getInputStream();
-            //OutputStream out = channel.getOutputStream();
             
             Scanner scanner = new Scanner(in);
             channel.connect(30000);
-            //try { Thread.sleep(30000); } catch (Exception e) {}
             while (scanner.hasNextLine()) {
                 result = scanner.nextLine();
+                System.out.println(result);
             }
             channel.disconnect();
         } catch (JSchException e) {
@@ -239,10 +276,16 @@ public class AstralControl implements OptimizationControl {
     private Session mainSession;
     private String username;
     private String password;
-    private String result;
+    private volatile String result;
     private final static String host = "hpcgate.cranfield.ac.uk";
     private final static String localhost = "127.0.0.1";
     private final static String astral = "hpclogin-1.central.cranfield.ac.uk";
     private final static int localport = 18022;
     private final static int remoteport = 22;
+    
+    private final JTextField userField;
+    private final JTextField passField;
+    private final JPanel loginPanel;
+    private session.Session optSession;
+    private Thread thread;
 }

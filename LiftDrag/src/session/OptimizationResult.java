@@ -12,6 +12,7 @@ import java.text.NumberFormat;
  *
  * @author madfist
  */
+//fake change
 public class OptimizationResult {
     public double angle;
     public double camber;
@@ -46,6 +47,26 @@ public class OptimizationResult {
                " Thickness="+f.format(thickness)+
                " Lift="+f.format(lift)+" Drag="+f.format(drag)+
                " LD="+f.format(getLiftDrag());
+    }
+    
+    public double getAngle() {
+        return angle;
+    }
+
+    public double getCamber() {
+        return camber;
+    }
+
+    public double getThickness() {
+        return thickness;
+    }
+
+    public double getDrag() {
+        return drag;
+    }
+
+    public double getLift() {
+        return lift;
     }
 
 }

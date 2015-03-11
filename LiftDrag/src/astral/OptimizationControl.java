@@ -6,13 +6,14 @@
 package astral;
 
 import session.OptimizationResult;
+import session.Session;
 
 /**
  *
  * @author madfist
  */
 public interface OptimizationControl {
-    public abstract OptimizationResult readResults(String s1, String  s2);
-    public abstract void startSession(String username, String password);
+    public abstract OptimizationResult readResults();
+    public abstract void startSession(Session s);
     public abstract void stopSession();
 }
