@@ -16,11 +16,13 @@ public class MainFrame extends JFrame implements LogoutListener
 
 
     public MainFrame() {
+    	setResizable(false);
 
     	loginDialog = new LoginDialog(this, true);
     	loginDialog.setVisible(true);
     	
     	sessionPanel = new SessionPanel();
+    	sessionPanel.setMinimumSize(new Dimension(600, 675));
     	sessionPanel.addLogoutListener(this);
     	getContentPane().add(sessionPanel, BorderLayout.CENTER);
     	
@@ -30,24 +32,6 @@ public class MainFrame extends JFrame implements LogoutListener
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	setLocationRelativeTo(null);
     	
-    }
-
-    public static void main(String[] args) {
-    	
-    	try
-		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Throwable e)
-		{
-			e.printStackTrace();
-		}
-    	
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	MainFrame mainFrame = new MainFrame();
-            }
-        });
     }
 
 	@Override

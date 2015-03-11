@@ -20,6 +20,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import database.SQLiteConnexion;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
@@ -141,10 +143,8 @@ public class LoginDialog extends JDialog implements ActionListener
 				JOptionPane.showMessageDialog(this, "Password field is empty.", "Wrong password", JOptionPane.ERROR_MESSAGE);
 			else
 			{
-				// TODO: Checking if the session name exists, if it does - gtfo
-				// TODO: Creating account here
-				
-				JOptionPane.showMessageDialog(this, "Account \"" + sessionField.getText() + "\" has been created.");
+				ParamDialog paramDialog = new ParamDialog((JFrame) getParent(), true, session, password);
+				paramDialog.setVisible(true);
 			}
 			
 			Arrays.fill(password, '0');
@@ -164,7 +164,8 @@ public class LoginDialog extends JDialog implements ActionListener
 			else
 			{
 				// TODO: Checking if the session name exists, if it doesn't or wrong password - gtfo
-				// TODO: Creating account here
+				// TODO: opening session
+				
 				
 				setVisible(false);
 				getParent().setVisible(true);
