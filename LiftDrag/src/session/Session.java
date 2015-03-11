@@ -8,6 +8,7 @@ package session;
 import database.SessionControl;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 /**
  *
@@ -66,23 +67,26 @@ public class Session implements SessionInfo, Logging {
     }
 
     @Override
-    public List<OptimizationResult> getLog() {
-        //database call through control
-        //parsing
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<OptimizationResult> getLog() {//all the iteration
+        List<OptimizationResult> list=new ArrayList<OptimizationResult>();
+        for(int i=1; i<=control.maxIteration(getId());i++){
+            list.add(control.getResult(i, getId()));
+        }
+        return list;
     }
 
     @Override
-    public List<OptimizationResult> getLog(int a, int b) {
-        //database call through control
-        //parsing
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<OptimizationResult> getLog(int a, int b) {//from iteration a to iteration b
+        List<OptimizationResult> list=new ArrayList<OptimizationResult>();
+        for(int i=a; i<=b;i++){
+            list.add(control.getResult(i, getId()));
+        }
+        return list;
     }
 
     @Override
-    public void logResult(OptimizationResult r) {
-        //database call through control
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void logResult(OptimizationResult r) {//save iteration
+        control.setResult(r, getId());
     }
 
     public double getMinangle() {

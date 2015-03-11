@@ -207,4 +207,22 @@ public class SQLiteConnection implements SessionControl{
         System.err.println("Iteration not found");
         return null;
     }
+    
+    public int maxIteration(int id){//find the number of iteration already existing for this session
+        Statement stmt = null;
+        try {
+            stmt = c.createStatement();
+            String sql="SELECT COUNT(ID) AS NB FROM ITERATION WHERE SESSION="+id+" ;";
+            ResultSet rs = stmt.executeQuery(sql);
+            rs.next();
+            int num = rs.getInt("NB");
+            rs.close();
+            stmt.close();
+            return num;
+        }catch(Exception e){
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+        return -1;
+    }
 }
