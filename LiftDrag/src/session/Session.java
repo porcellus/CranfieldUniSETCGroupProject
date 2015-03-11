@@ -13,6 +13,7 @@ import java.util.List;
  *
  * @author madfist
  */
+//fake changeS
 public class Session implements SessionInfo, Logging {    
     private String name;
     //private byte[] passwordHash;

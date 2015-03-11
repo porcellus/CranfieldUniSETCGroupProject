@@ -15,7 +15,7 @@ public interface SessionControl {
     public abstract Session createSession(String username, String password);    
     public abstract Session loginSession(String username, String password);
     public abstract void setSessionParameters(Session s);
-    public abstract void setResult(float result, int id);
-    public abstract float getResult(int number, int id);
+    public abstract void setResult(OptimizationResult result, int id);
+    public abstract OptimizationResult getResult(int number, int id);
     
 }

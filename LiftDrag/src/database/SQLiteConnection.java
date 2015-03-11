@@ -8,16 +8,17 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+import session.OptimizationResult;
 import session.Session;
 /**
  *
  * @author pandachan
  */
-public class SQLiteConnexion implements SessionControl{
+public class SQLiteConnection implements SessionControl{
     static Connection c = null;
     static Statement stmt = null;
 
-    public static Connection connexion(){ //Create the connexion to the database
+    public static Connection connection(){ //Create the connexion to the database
         try {
             Class.forName("org.sqlite.JDBC");//use sqlite-jdbc jar in library repository
             //db and tables creation if not already existing
@@ -27,19 +28,23 @@ public class SQLiteConnexion implements SessionControl{
                          "(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                          " NAME TEXT NOT NULL, " + 
                          " PWD TEXT NOT NULL, "+
-                          " MINANGLE FLOAT, "+
-                          " MAXANGLE FLOAT, "+
-                          " MINTHICKNESS FLOAT, "+
-                          " MAXTHICKNESS FLOAT, "+
-                          " MINCAMBER FLOAT, "+
-                          " MAXCAMBER FLOAT "+
+                          " MINANGLE DOUBLE, "+
+                          " MAXANGLE DOUBLE, "+
+                          " MINTHICKNESS DOUBLE, "+
+                          " MAXTHICKNESS DOUBLE, "+
+                          " MINCAMBER DOUBLE, "+
+                          " MAXCAMBER DOUBLE "+
                          " )";
             stmt.executeUpdate(sql);
             sql = "CREATE TABLE IF NOT EXISTS ITERATION " +
                  "(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                  " SESSION INT NOT NULL, " + 
                  " NUM INT NOT NULL, " + 
-                 " RESULT FLOAT NOT NULL," + 
+                 " ANGLE DOUBLE NOT NULL," + 
+                 " CAMBER DOUBLE NOT NULL," + 
+                 " THICKNESS DOUBLE NOT NULL," + 
+                 " LIFT DOUBLE NOT NULL," + 
+                 " DRAG DOUBLE NOT NULL," + 
                  "FOREIGN KEY(SESSION) REFERENCES SESSION(ID))";
             stmt.executeUpdate(sql);
             stmt.close();
@@ -112,12 +117,12 @@ public class SQLiteConnexion implements SessionControl{
             if(numberRows == 0) System.err.println("Session not found");
             else{//if the session exists return the session as object with all its data
                 int id=rs.getInt("ID");
-                float minangle = rs.getFloat("MINANGLE");
-                float maxangle = rs.getFloat("MAXANGLE");
-                float minthickness = rs.getFloat("MINTHICKNESS");
-                float maxthickness = rs.getFloat("MAXTHICKNESS");
-                float mincamber = rs.getFloat("MINCAMBER");
-                float maxcamber = rs.getFloat("MAXCAMBER");
+                double minangle = rs.getDouble("MINANGLE");
+                double maxangle = rs.getDouble("MAXANGLE");
+                double minthickness = rs.getDouble("MINTHICKNESS");
+                double maxthickness = rs.getDouble("MAXTHICKNESS");
+                double mincamber = rs.getDouble("MINCAMBER");
+                double maxcamber = rs.getDouble("MAXCAMBER");
                 rs.close();
                 stmt.close();
                 return new Session(this, id, username, encodePwd, minangle, maxangle, minthickness, maxthickness, mincamber, maxcamber);
@@ -152,7 +157,7 @@ public class SQLiteConnexion implements SessionControl{
     }
 
     @Override
-    public void setResult(float result, int id) {//add the result as an iteration to the session
+    public void setResult(OptimizationResult result, int id) {//add the result as an iteration to the session
         Statement stmt = null;
         try {
             //find the number of iteration already existing for this session
@@ -165,7 +170,7 @@ public class SQLiteConnexion implements SessionControl{
             rs.close();
             //add the new result as an iteration
             c.setAutoCommit(false);
-            sql = "INSERT INTO ITERATION (SESSION,RESULT,NUM) VALUES ("+ id +", "+ result +", "+num+");";
+            sql = "INSERT INTO ITERATION (SESSION, ANGLE, CAMBER, THICKNESS, LIFT, DRAG, NUM) VALUES ("+ id +", "+ result.getAngle() +", "+ result.getCamber() +", "+ result.getThickness() +", "+ result.getLift() +", "+ result.getDrag() +", "+num+");";
             stmt.executeUpdate(sql);
             c.commit();
             stmt.close();
@@ -177,16 +182,17 @@ public class SQLiteConnexion implements SessionControl{
     }
 
     @Override
-    public float getResult(int number, int id) {//find the result for a specific iteration of a specific session
+    public OptimizationResult getResult(int number, int id) {//find the result for a specific iteration of a specific session
         Statement stmt = null;
         try {
             //try to find the iteration
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            String sql="SELECT RESULT FROM ITERATION WHERE SESSION="+id+" AND NUM="+number+" ;";
+            String sql="SELECT ANGLE, CAMBER, THICKNESS, LIFT, DRAG FROM ITERATION WHERE SESSION="+id+" AND NUM="+number+" ;";
             ResultSet rs = stmt.executeQuery( sql );
             while(rs.next()){//if it exists return the result
-              float res = rs.getFloat("RESULT");
+              OptimizationResult res = new OptimizationResult();
+              res.set(rs.getDouble("ANGLE"),rs.getDouble("CAMBER"),rs.getDouble("THICKNESS"),rs.getDouble("LIFT"),rs.getDouble("DRAG"));
               rs.close();
               stmt.close();
               System.out.println("Iteration found");
@@ -199,6 +205,6 @@ public class SQLiteConnexion implements SessionControl{
             System.exit(0);
         }
         System.err.println("Iteration not found");
-        return -1;
+        return null;
     }
 }
