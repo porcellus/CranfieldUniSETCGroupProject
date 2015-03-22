@@ -1,0 +1,23 @@
+\documentclass[12pt,a4paper]{report}
+
+\include{includes/packages}
+
+\begin{document}
+	\input{includes/title}
+	\tableofcontents
+%----------CONTENT------------ %
+	\input{sections/introduction}
+	\input{sections/technical}
+	\input{sections/requirements}
+	\input{sections/design}
+	\input{sections/implementation}
+	\input{sections/test}
+	\input{sections/failure}
+	\input{sections/conclusion}
+	
+	\begin{flushleft}
+		\bibliographystyle{newapa}
+		\bibliography{includes/bibliography}
+		\addcontentsline{toc}{chapter}{Bibliography}
+	\end{flushleft} 
+\end{document}
