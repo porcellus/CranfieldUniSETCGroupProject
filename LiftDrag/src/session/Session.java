@@ -5,22 +5,19 @@
  */
 package session;
 
+import database.SQLiteConnection;
 import database.SessionControl;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 /**
  *
  * @author madfist
  */
-//fake changeS
 public class Session implements SessionInfo, Logging {    
-    private String name;
-    //private byte[] passwordHash;
-    private String passwordHash;
-    private SessionControl control;
-    private int id;
+    private final String name;
+    private final String password;
+    private final SessionControl control;
+    private final int id;
     private double minangle;
     private double maxangle;
     private double minthickness;
@@ -30,14 +27,7 @@ public class Session implements SessionInfo, Logging {
     
     public Session(String n, String pw, SessionControl ctrl, int ind) {
         name = n;
-        /*try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(pw.getBytes());
-            passwordHash = md.digest();
-        } catch (NoSuchAlgorithmException ex) {
-            System.out.println("no md5");
-        }*/
-        passwordHash=pw;
+        password=pw;
         control = ctrl;
         id=ind;
     }
@@ -45,7 +35,7 @@ public class Session implements SessionInfo, Logging {
     public Session(SessionControl ctrl, int id, String username, String pwd, double minangle, double maxangle, double minthickness, double maxthickness, double mincamber, double maxcamber){
         this.id=id;
         this.name=username;
-        this.passwordHash=pwd;
+        this.password=pwd;
         this.minangle=minangle;
         this.maxangle=maxangle;
         this.minthickness=minthickness;
@@ -58,7 +48,7 @@ public class Session implements SessionInfo, Logging {
     @Override
     public String getPassHash() {        
         //return new String(passwordHash);
-        return passwordHash;
+        return password;
     }
 
     @Override
@@ -67,26 +57,30 @@ public class Session implements SessionInfo, Logging {
     }
 
     @Override
-    public List<OptimizationResult> getLog() {//all the iteration
-        List<OptimizationResult> list=new ArrayList<OptimizationResult>();
-        for(int i=1; i<=control.maxIteration(getId());i++){
-            list.add(control.getResult(i, getId()));
+    public List<OptimizationResult> getLog() {
+        //database call through control
+        int N = control.getIterationNum(id);
+        ArrayList<OptimizationResult> log = new ArrayList<>();
+        for (int i=0; i<N; ++i) {
+            log.add(control.getResult(i, id));
         }
-        return list;
+        return log;
     }
 
     @Override
-    public List<OptimizationResult> getLog(int a, int b) {//from iteration a to iteration b
-        List<OptimizationResult> list=new ArrayList<OptimizationResult>();
-        for(int i=a; i<=b;i++){
-            list.add(control.getResult(i, getId()));
+    public List<OptimizationResult> getLog(int a, int b) {
+        //database call through control
+        ArrayList<OptimizationResult> log = new ArrayList<>();
+        for (int i=a; i<b; ++i) {
+            log.add(control.getResult(i, id));
         }
-        return list;
+        return log;
     }
 
     @Override
-    public void logResult(OptimizationResult r) {//save iteration
-        control.setResult(r, getId());
+    public void logResult(OptimizationResult r) {
+        //database call through control
+        control.setResult(r, id);
     }
 
     public double getMinangle() {
@@ -117,12 +111,14 @@ public class Session implements SessionInfo, Logging {
         return id;
     }
     
-    public void setParameters(double minangle, double maxangle, double minthickness, double maxthickness, double mincamber, double maxcamber){
+    public void setParameters(double minangle, double maxangle,
+                              double mincamber, double maxcamber,
+                              double minthickness, double maxthickness) {
         this.minangle=minangle;
         this.maxangle=maxangle;
-        this.minthickness=minthickness;
-        this.maxthickness=maxthickness;
         this.mincamber=mincamber;
         this.maxcamber=maxcamber;
+        this.minthickness=minthickness;
+        this.maxthickness=maxthickness;
     }
 }

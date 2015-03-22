@@ -8,7 +8,6 @@ package liftdrag;
 import gui.MainWindow;
 import org.apache.commons.cli.*;
 import optimizer.*;
-import session.OptimizationResult;
 
 /**
  *
