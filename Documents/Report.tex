@@ -20,7 +20,7 @@
 \chapter{Requirements specifications}
 	\subsection{Usecases}
 This project handle login as sessions. Therefore each session (a set of iterations) is a new user with a new password.  However, all these "users" are of the same type and have the same functionnalities : \\
-\includegraphics[scale=0.4]{Usecase_group-project.png}
+%\includegraphics[scale=0.4]{Usecase_group-project.png}
 Mainly, the purpose of this software is to solve an equation with different given parameters and to display the result graphically.
 	\subsection{Functional and non functional requirements}
 On the previous usecase, different functionalities are written. This subsection will detailed those functionalities into functional and non functional requirements.
@@ -61,5 +61,37 @@ Speed & To use a cluster for solving the equation \\
 \end{tabular} 
 	\subsection{Further information}
 An example has been given for the software user interface. With the functionalities required, the final product should have two "pages", one for the connexion or creation of a session, and another one once logged in a session, as the mockups below:\\
-\includegraphics[scale=0.4]{group_project_mockups.png}
+%\includegraphics[scale=0.4]{group_project_mockups.png}
+
+\pagebreak
+\section{System design}
+\subsection{Component diagram}
+We began the design process by dividing the system into bigger modules and designing the interfaces between them to conduce parallel work. We split the software into 4 bigger modules and assigned one to each team member:\\
+\begin{enumerate}
+\item Database \& Session: Marion Le Guével
+\item Atlas Connector: Ádám Koleszár
+\item GUI: Jacek Czyrnek
+\item Wing Visualizer: Mihály Lengyel
+\end{enumerate}
+The following diagram shows the components of the system and the interfaces they interact through.
+\begin{figure}[h!]
+\includegraphics[width=\textwidth]{CompModel.jpg}
+\caption{Component diagram}
+\end{figure}
+\pagebreak
+
+\subsection{Class diagram}
+In the following diagram you can see, that the classes in the implemented system are simple reflections of the component design above.
+\begin{figure}[h!]
+\includegraphics[width=\textwidth]{ClassModel.jpg}
+\caption{Class diagram}
+\end{figure}
+\pagebreak
+\subsection{Sequence diagram}
+To complement the static diagrams above here we provide a diagram to show the dynamic behaviour of the system. This is not an exact sequence diagram but it shows the flow of data through the system.
+\begin{figure}[h!]
+\includegraphics[width=\textwidth]{SequenceModel.jpg}
+\caption{Sequence diagram}
+\end{figure}
+
 \end{document}
