@@ -83,7 +83,7 @@ public class AstralUserInfo implements UserInfo, UIKeyboardInteractive {
             }
         } else {
             if (prompt.length == 1 && prompt[0].contains("Password")) {
-                System.out.println("Skipping keyboard interactive passwod prompt");
+                System.out.println("Skipping keyboard interactive password prompt");
                 result[0] = password;
             }
         }

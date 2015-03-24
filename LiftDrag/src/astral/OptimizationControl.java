@@ -13,7 +13,11 @@ import session.Session;
  * @author madfist
  */
 public interface OptimizationControl {
+    public static final int READY = 0;
+    public static final int CONNECTING = 1;
+    public static final int RUNNING = 2;
     public abstract OptimizationResult readResults();
     public abstract void startSession(Session s);
     public abstract void stopSession();
+    public abstract int getStatus();
 }

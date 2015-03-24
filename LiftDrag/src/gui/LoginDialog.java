@@ -20,10 +20,12 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import session.Session;
 import database.SQLiteConnection;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 public class LoginDialog extends JDialog implements ActionListener
@@ -39,6 +41,8 @@ public class LoginDialog extends JDialog implements ActionListener
 	
 	private JButton createButton;
 	private JButton openButton;
+	
+	private LoginListener loginListener;
 
 	/**
 	 * Create the dialog.
@@ -131,19 +135,24 @@ public class LoginDialog extends JDialog implements ActionListener
 	        }
 		});
 	}
+	
+	public void addLoginListener(LoginListener loginListener)
+	{
+		this.loginListener = loginListener;
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == createButton)
 		{
-			String session = sessionField.getText();
+			String sessionName = sessionField.getText();
 			char[] password = passwordField.getPassword();
-			if(session.isEmpty())
+			if(sessionName.isEmpty())
 				JOptionPane.showMessageDialog(this, "Session name field is empty.", "Wrong session name", JOptionPane.ERROR_MESSAGE);
 			else if(password.length == 0)
 				JOptionPane.showMessageDialog(this, "Password field is empty.", "Wrong password", JOptionPane.ERROR_MESSAGE);
 			else
 			{
-				ParamDialog paramDialog = new ParamDialog((JFrame) getParent(), true, session, password);
+				ParamDialog paramDialog = new ParamDialog((JFrame) getParent(), true, sessionName, password);
 				paramDialog.setVisible(true);
 			}
 			
@@ -153,7 +162,7 @@ public class LoginDialog extends JDialog implements ActionListener
 			
 			sessionField.requestFocusInWindow();
 		}
-		else if(e.getSource() == openButton)
+		else if(e.getSource() == openButton && loginListener != null)
 		{
 			String session = sessionField.getText();
 			char[] password = passwordField.getPassword();
@@ -163,17 +172,28 @@ public class LoginDialog extends JDialog implements ActionListener
 				JOptionPane.showMessageDialog(this, "Password field is empty.", "Wrong password", JOptionPane.ERROR_MESSAGE);
 			else
 			{
-				// TODO: Checking if the session name exists, if it doesn't or wrong password - gtfo
-				// TODO: opening session
-				
-				
-				setVisible(false);
-				getParent().setVisible(true);
+				try
+				{
+					SQLiteConnection database = new SQLiteConnection();
+					database.connection();
+					Session s = database.loginSession(session, new String(password));
+					
+					if(s != null)
+					{
+						loginListener.openButtonPressed(session, password);
+					}	
+				} catch (SQLException ex)
+				{
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 			
 			Arrays.fill(password, '0');
 			sessionField.setText("");
 			passwordField.setText("");
+			
+			sessionField.requestFocusInWindow();
 		}
 	}
 }

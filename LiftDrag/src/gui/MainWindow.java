@@ -32,7 +32,7 @@ import visualize.WingPanel;
 public class MainWindow extends JFrame implements ActionListener {
     public MainWindow()
     {
-        optControl = new AstralControl();
+        optControl = new AstralControl(this);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JLabel label = new JLabel("Group Project, YaaaaY");
         JLabel sessionLabel = new JLabel("Session name");

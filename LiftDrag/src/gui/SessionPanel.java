@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -20,13 +21,20 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.Timer;
 
+import session.Session;
 import visualize.WingPanel;
 import astral.AstralControl;
 import astral.OptimizationControl;
+
 import java.awt.Component;
+
 import javax.swing.Box;
 import javax.swing.JRadioButton;
+
+import database.SQLiteConnection;
+import database.SessionControl;
 
 public class SessionPanel extends JPanel implements ActionListener
 {
@@ -35,6 +43,8 @@ public class SessionPanel extends JPanel implements ActionListener
 	
 	private LogoutListener logoutListener;
 	
+	private Session session;
+	private SessionControl sessionControl;
 	private final OptimizationControl optControl;
 	private WingPanel wingPanel;
 	private JButton startButton;
@@ -53,7 +63,7 @@ public class SessionPanel extends JPanel implements ActionListener
 	public SessionPanel()
 	{
 		sessionRunning = false;
-		optControl = new AstralControl();
+		optControl = new AstralControl((JFrame) this.getParent());
 		wingPanel = new WingPanel();
 		wingPanel.start();
 		
@@ -150,6 +160,11 @@ public class SessionPanel extends JPanel implements ActionListener
 		
 		setLayout(groupLayout);
 
+		Timer timer = new Timer(100, this);
+        timer.start();
+        sessionControl = new SQLiteConnection();
+        SQLiteConnection.connection();
+        session = null;
 	}
 	
 	public void addLogoutListener(LogoutListener logoutListener)
@@ -158,6 +173,13 @@ public class SessionPanel extends JPanel implements ActionListener
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		if (optControl.getStatus() == OptimizationControl.RUNNING) {
+            wingPanel.setParameters(optControl.readResults());
+            //resultPanel.updateResult(optControl.readResults());
+            if (session != null) session.logResult(optControl.readResults());
+            repaint();
+        }
+		
 		if(e.getSource() == logoutButton && logoutListener != null)
 		{
 			int choice = JOptionPane.showConfirmDialog(
@@ -233,4 +255,36 @@ public class SessionPanel extends JPanel implements ActionListener
 			}
 		}
 	}
+
+	public void loginSession(String sessionName, char[] password)
+	{
+		try
+		{
+			session = sessionControl.loginSession(sessionName, new String(password));
+		}
+		catch (SQLException ex)
+		{
+			ex.printStackTrace();
+			JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}      
+	}
+	
+	public void startSession()
+	{
+		// TODO Auto-generated method stub
+		if (session == null)
+			System.err.println("Session not created.");
+		else
+		{
+			wingPanel.start();
+			optControl.startSession(session);
+		}
+	}
+	
+	public void stopSession() {
+		wingPanel.setParameters(optControl.readResults());
+        optControl.stopSession();
+    }
+
+
 }

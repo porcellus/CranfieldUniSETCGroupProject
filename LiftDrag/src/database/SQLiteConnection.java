@@ -7,7 +7,9 @@ package database;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+
 import session.OptimizationResult;
 import session.Session;
 /**
@@ -57,7 +59,7 @@ public class SQLiteConnection implements SessionControl{
     }
 
     @Override
-    public Session createSession(String username, String password) {//check if a name is not already used and create new session
+    public Session createSession(String username, String password) throws SQLException {//check if a name is not already used and create new session
         MessageDigest md5;
         try {
             //check username non existing
@@ -68,7 +70,7 @@ public class SQLiteConnection implements SessionControl{
                 rs.close();
                 stmt.close();
                 System.err.println("Name already used for another session");
-                return null;
+                throw new SQLException("This session name is already used for another session.");
             }
             rs.close();
             //create a new session if it doesn't exist
@@ -93,15 +95,13 @@ public class SQLiteConnection implements SessionControl{
         } catch (NoSuchAlgorithmException ex) {
             System.err.println( "Problem with MD5" );
             System.exit(0);
-        }catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-            System.exit(0);
-        }  
+        }
+
         return null;
     }
 
     @Override
-    public Session loginSession(String username, String password) {//return the session asked as object if it exists
+    public Session loginSession(String username, String password) throws SQLException {//return the session asked as object if it exists
         Statement stmt = null;
         MessageDigest md5;
         try {
@@ -114,7 +114,13 @@ public class SQLiteConnection implements SessionControl{
             ResultSet rs = stmt.executeQuery( sql );
             rs.next();
             int numberRows = rs.getInt("FOUND");
-            if(numberRows == 0) System.err.println("Session not found");
+            if(numberRows == 0)
+			{
+            	rs.close();
+            	stmt.close();
+			    System.err.println("Session not found");
+			    throw new SQLException("Invalid session name or password.");
+			}
             else{//if the session exists return the session as object with all its data
                 int id=rs.getInt("ID");
                 double minangle = rs.getDouble("MINANGLE");
@@ -127,15 +133,11 @@ public class SQLiteConnection implements SessionControl{
                 stmt.close();
                 return new Session(this, id, username, encodePwd, minangle, maxangle, minthickness, maxthickness, mincamber, maxcamber);
             }
-            rs.close();
-            stmt.close();
         } catch (NoSuchAlgorithmException ex) {
             System.err.println( "Problem with MD5" );
             System.exit(0);
-        } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-            System.exit(0);
         }
+        
         return null;
     }
 

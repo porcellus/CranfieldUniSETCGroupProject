@@ -6,7 +6,11 @@
 package astral;
 
 import session.OptimizationResult;
+
 import com.jcraft.jsch.*;
+
+import gui.MainWindow;
+
 import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Scanner;
+
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,7 +31,8 @@ import javax.swing.JTextField;
  * @author madfist
  */
 public class AstralControl implements OptimizationControl, Runnable {
-    public AstralControl() {
+    public AstralControl(JFrame mw) {
+        parentWindow = mw;
         JLabel userLabel = new JLabel("username");
         JLabel passLabel = new JLabel("password");
         userField = new JTextField();
@@ -37,6 +44,12 @@ public class AstralControl implements OptimizationControl, Runnable {
         loginPanel.add(passField);
         
         result = null;
+        status = READY;
+    }
+    
+    @Override
+    public int getStatus() {
+        return status;
     }
 
     @Override
@@ -62,12 +75,11 @@ public class AstralControl implements OptimizationControl, Runnable {
     public void startSession(session.Session s) {
         jsch = new JSch();
         optSession = s;
-        int ans = JOptionPane.showConfirmDialog(null, loginPanel,
+        int ans = JOptionPane.showConfirmDialog(parentWindow, loginPanel,
                               "Login to Astral", JOptionPane.OK_CANCEL_OPTION);
         if (ans == JOptionPane.OK_OPTION) {
             username = userField.getText();
             password = passField.getText();
-            //System.out.println("u "+username+" p "+password);
         } else {
             return;
         }
@@ -108,6 +120,7 @@ public class AstralControl implements OptimizationControl, Runnable {
     }
 
     private void openTunnelSession() {
+        status = CONNECTING;
         System.out.println("Tunnel...");
         UserInfo userInfo = new AstralUserInfo(password);
         try {
@@ -244,16 +257,19 @@ public class AstralControl implements OptimizationControl, Runnable {
     }
 
     private void openShell(Session session) {
+        status = RUNNING;
         System.out.println("Shell...");
         try {
             Channel channel = session.openChannel("exec");
-            String command = "java -jar LdOpt.jar -s 0.1"+
+            String command = "java -jar LdOpt.jar -s 0.005"+
+                             " -o "+optSession.getSessionName()+
                              " -a "+optSession.getMinangle()+
                              " -A "+optSession.getMaxangle()+
                              " -c "+optSession.getMincamber()+
                              " -C "+optSession.getMaxangle()+
                              " -t "+optSession.getMinthickness()+
-                             " -T "+optSession.getMaxthickness()+"\n";
+                             " -T "+optSession.getMaxthickness()+
+                             " & sleep 1;tail -f "+ optSession.getSessionName()+"\n";
             ((ChannelExec)channel).setCommand(command.getBytes());
             InputStream in = channel.getInputStream();
             
@@ -269,6 +285,7 @@ public class AstralControl implements OptimizationControl, Runnable {
         } catch (IOException e) {
             System.out.println("Exec - IO: " + e);
         }
+        status = READY;
     }
 
     private JSch jsch;
@@ -288,4 +305,6 @@ public class AstralControl implements OptimizationControl, Runnable {
     private final JPanel loginPanel;
     private session.Session optSession;
     private Thread thread;
+    private final JFrame parentWindow;
+    private volatile int status;
 }

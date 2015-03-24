@@ -25,6 +25,7 @@ import database.SQLiteConnection;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 
 public class ParamDialog extends JDialog
 {
@@ -51,7 +52,7 @@ public class ParamDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public ParamDialog(JFrame parent, boolean modal, final String session, final char[] password)
+	public ParamDialog(JFrame parent, boolean modal, final String sessionName, final char[] password)
 	{
 		super(parent, modal);
 		setResizable(false);
@@ -73,23 +74,23 @@ public class ParamDialog extends JDialog
 		startLabel = new JLabel("Start");
 		
 		camberMinSpinner = new JSpinner();
-		camberMinSpinner.setModel(new SpinnerNumberModel(-20, -20, 20, 1));
+		camberMinSpinner.setModel(new SpinnerNumberModel(-20.0, -20.0, 20.0, 0.0));
 		camberMaxSpinner = new JSpinner();
-		camberMaxSpinner.setModel(new SpinnerNumberModel(20, -20, 20, 1));
+		camberMaxSpinner.setModel(new SpinnerNumberModel(20.0, -20.0, 20.0, 0.0));
 		camberStartSpinner = new JSpinner();
-		camberStartSpinner.setModel(new SpinnerNumberModel(0, -20, 20, 1));
+		camberStartSpinner.setModel(new SpinnerNumberModel(0.0, -20.0, 20.0, 0.0));
 		thicknessMinSpinner = new JSpinner();
-		thicknessMinSpinner.setModel(new SpinnerNumberModel(1, 1, 20, 1));
+		thicknessMinSpinner.setModel(new SpinnerNumberModel(1.0, 1.0, 20.0, 0.0));
 		thicknessMaxSpinner = new JSpinner();
-		thicknessMaxSpinner.setModel(new SpinnerNumberModel(20, 1, 20, 1));
+		thicknessMaxSpinner.setModel(new SpinnerNumberModel(20.0, 1.0, 20.0, 0.0));
 		thicknessStartSpinner = new JSpinner();
-		thicknessStartSpinner.setModel(new SpinnerNumberModel(10, 1, 20, 1));
+		thicknessStartSpinner.setModel(new SpinnerNumberModel(10.0, 1.0, 20.0, 0.0));
 		angleMinSpinner = new JSpinner();
-		angleMinSpinner.setModel(new SpinnerNumberModel(-15, -15, 15, 1));
+		angleMinSpinner.setModel(new SpinnerNumberModel(-15.0, -15.0, 15.0, 0.0));
 		angleMaxSpinner = new JSpinner();
-		angleMaxSpinner.setModel(new SpinnerNumberModel(15, -15, 15, 1));
+		angleMaxSpinner.setModel(new SpinnerNumberModel(15.0, -15.0, 15.0, 0.0));
 		angleStartSpinner = new JSpinner();
-		angleStartSpinner.setModel(new SpinnerNumberModel(0, -15, 15, 1));
+		angleStartSpinner.setModel(new SpinnerNumberModel(0.0, -15.0, 15.0, 0.0));
 		
 		
 		
@@ -183,19 +184,28 @@ public class ParamDialog extends JDialog
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						
-//						SQLiteConnexion database = new SQLiteConnexion();
-//						Session s = database.createSession(session, new String(password));
-//						s.setParameters((float) angleMinSpinner.getValue(),
-//										(float) angleMaxSpinner.getValue(),
-//										(float) thicknessMinSpinner.getValue(),
-//										(float) thicknessMaxSpinner.getValue(),
-//										(float) camberMinSpinner.getValue(),
-//										(float) camberMaxSpinner.getValue());
-//
-//						database.setSessionParameters(s);
-												
-						// TODO: add session to database, check availability of session ID
-						JOptionPane.showMessageDialog(null, "Session \"" + session + "\" has been created.");
+						try
+						{
+							SQLiteConnection database = new SQLiteConnection();
+							database.connection();
+							Session s = database.createSession(sessionName, new String(password));
+							s.setParameters((double) angleMinSpinner.getValue(),
+											(double) angleMaxSpinner.getValue(),
+											(double) thicknessMinSpinner.getValue(),
+											(double) thicknessMaxSpinner.getValue(),
+											(double) camberMinSpinner.getValue(),
+											(double) camberMaxSpinner.getValue());
+	
+							database.setSessionParameters(s);
+							
+							JOptionPane.showMessageDialog(null, "Session \"" + sessionName + "\" has been created.");
+						}
+						catch (SQLException ex)
+						{
+							ex.printStackTrace();
+							JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+						}
+						
 						dispose();
 					}
 				});

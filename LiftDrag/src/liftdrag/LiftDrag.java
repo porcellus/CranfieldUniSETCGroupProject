@@ -5,8 +5,14 @@
  */
 package liftdrag;
 
+import javax.swing.UIManager;
+
+import gui.MainFrame;
 import gui.MainWindow;
+import gui.ParamDialog;
+
 import org.apache.commons.cli.*;
+
 import optimizer.*;
 import session.OptimizationResult;
 
@@ -70,8 +76,18 @@ public class LiftDrag {
                 help.printHelp("LiftDrag [options]\nNo options opens the GUI", options);
             }
         } else {
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.setVisible(true);
+        	try
+    		{
+    			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    		} catch (Throwable e)
+    		{
+    			e.printStackTrace();
+    		}
+        	
+//        	MainWindow mainWindow = new MainWindow();
+//            mainWindow.setVisible(true);
+        	
+        	MainFrame mainFrame = new MainFrame();
         }
     }
 }
