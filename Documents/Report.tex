@@ -94,4 +94,14 @@ To complement the static diagrams above here we provide a diagram to show the dy
 \caption{Sequence diagram}
 \end{figure}
 
+\chapter{Failure case studies}
+In this chapter we are going to write about the various failures that can occur during execution of the program and the way they can be avoided or repaired.
+\section{Communication errors}
+For a system that uses external connections to transfer data between components (like a network) is bound to have some communication errors in time. These can be disconnection issues, data corruption, security issues. As programmers we have to ensure that the system will properly handle these issues without too much data loss.
+
+Failure to do so will lead to the waste of significant computation effort, which can be ultimately translated to the loss of money and time. To avoid or to be prepared for these cases the following measures were taken.
+
+\subsection{Disconnection}
+If a network connection disconnects it is only allowed to lose the data being sent, nothing more. For this, proper and thorough logging system needs to be implemented. In our case it is client and server side logging as well. On the server side simple log files are created 
+
 \end{document}
