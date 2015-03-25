@@ -3,19 +3,23 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\author{Jacek Czyrnek, Adam Koleszar, Marion Le Guével, Mihaly Lengyel
-•
-}
+\usepackage{fullpage}
+\usepackage[numbers,square]{natbib}
+\AtBeginDocument{\renewcommand{\bibname}{References}}
+
+\author{Jacek Czyrnek, Adam Koleszar, Marion Le Guével, Mihaly Lengyel}
 \usepackage{graphicx}
 \graphicspath{{/home/pandachan/Documents/cours/Group_project/}}
 \title{Group project report}
-\begin{document}
 
+\begin{document}
+\maketitle
+\tableofcontents
 \chapter{Introduction}
 
 
 \chapter{Technical review}
-
+We used NASA code \cite{WWW:NASA}.
 
 \chapter{Requirements specifications}
 	\subsection{Usecases}
@@ -96,12 +100,40 @@ To complement the static diagrams above here we provide a diagram to show the dy
 
 \chapter{Failure case studies}
 In this chapter we are going to write about the various failures that can occur during execution of the program and the way they can be avoided or repaired.
+
 \section{Communication errors}
 For a system that uses external connections to transfer data between components (like a network) is bound to have some communication errors in time. These can be disconnection issues, data corruption, security issues. As programmers we have to ensure that the system will properly handle these issues without too much data loss.
 
 Failure to do so will lead to the waste of significant computation effort, which can be ultimately translated to the loss of money and time. To avoid or to be prepared for these cases the following measures were taken.
 
 \subsection{Disconnection}
-If a network connection disconnects it is only allowed to lose the data being sent, nothing more. For this, proper and thorough logging system needs to be implemented. In our case it is client and server side logging as well. On the server side simple log files are created 
+If a network connection disconnects it is only allowed to lose the data being sent, nothing more. For this, proper and thorough logging system needs to be implemented. In our case it is client and server side logging as well.
+
+\subsection{Server side logging}
+On the server side simple log files are created. Every line contains the best solution at that point in time. The solution contains the angle of attack, the camber size relative to the chord and the thickness of the wing relative to the chord. The solution also contains the computed the dimensionless values of the lift and drag forces and the ratio of the two for easier data readability. The help the finding of data on the server the log files are named after the session name.
+
+\subsection{Client side logging}
+The sessions and the computed values are also logged on the client side of the application. These data are stored in the SQLite database file attached to the program. From that any computation session and it's result can be restored and even continued if the computation didn't finish.
+
+\subsection{Transfer error}
+If the messages between the server and the client side get corrupted for any kind of reason, the messages will get discarded, and user will get a notification about possible communication error. The computation will continue and produce relevant data on the server side. If the data in between is not relevant the results can be gathered from the server log, if they are relevant as well, the computation can continue from the last correct message.
+
+\subsection{SSH related errors}
+Before the computation could start the program needs to copy the computing part of the program to the remote machine. During these communications errors can occur either with the connection itself, or with the SSH protocol. Later errors include SSH server downtime, user authentication errors etc. Dealing with these issues is outside of the scope of our program, although the program will do anything so that no data should get lost. The program will notify the users about SSH errors, and computation won't start until such issues are handled.
+
+\section{Database error}
+
+
+\section{Software error}
+\subsection{Server side error}
+\subsection{Client side error}
+
+\chapter{Conclusion}
+
+\begin{flushleft}
+	\bibliographystyle{newapa}
+	\bibliography{bibliography}
+	\addcontentsline{toc}{chapter}{References}
+\end{flushleft}
 
 \end{document}
