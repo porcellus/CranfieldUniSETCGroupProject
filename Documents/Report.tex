@@ -4,6 +4,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{fullpage}
+\usepackage{url}
 \usepackage[numbers,square]{natbib}
 \AtBeginDocument{\renewcommand{\bibname}{References}}
 
@@ -98,6 +99,26 @@ To complement the static diagrams above here we provide a diagram to show the dy
 \caption{Sequence diagram}
 \end{figure}
 
+\chapter{Implementation}
+\subsection{Database}
+We used the SQLite single file database solution as our database, and for it to work with our JAVA application we used the open-source SQLite JDBC driver \cite{WWW:SQLite}.
+
+\subsection{Cluster connection}
+As a cluster we used the power of the Astral \footnote{10240 nodes} university cluster, which can be reached via SSH protocol. In order to connect to the servers from our software we used the open-source JSch package from JCraft \cite{WWW:JSCH}. It allowed us the connect to the gate server, copy our solver on it via SCP (secured copy) and start the computation. The result are also coming back on the SSH connection as remote command execution.
+
+For user authentication we created our own handler which uses the interfaces provided by the JSch package. It handles the password prompt and other connection configuration as well silently, so the user only need to type in his or her username and password.
+
+\subsection{Remote computation}
+Although our software contains the solver component as well, due Java version differences on the Astral server we decided to create a separate software that handles the computation and can run on the remote machines.
+
+It is a command line application. It has several parameter options. To handle these command line parameters we used the open-source CLI commons package from Apache \cite{WWW:CLI}.
+
+\subsubsection{Solver}
+It is based on the previously mentioned NASA air foil simulation educational JAVA applet \cite{WWW:NASA}. Because it contained computation for several other environment that is different for the normal Earth conditions we removed most irrelevant parts from it. The solver now can compute dimensionless lift and drag forces for given wing geometrics.
+
+\subsubsection{Optimizer}
+The optimizer is also part of the remote program. It takes parameter intervals for the wing geometrics and optimizes the lift drag ratio between those intervals returning the optimized wing geometrics. It also logs whenever a better solution is found.
+
 \chapter{Failure case studies}
 In this chapter we are going to write about the various failures that can occur during execution of the program and the way they can be avoided or repaired.
 
@@ -129,7 +150,9 @@ Before the computation could start the program needs to copy the computing part 
 \subsection{Client side error}
 
 \chapter{Conclusion}
+This group project was a good exercise to make us use all the knowledge we gathered throughout the last semester, and provided a quick introduction into making a complete product through teamwork.
 
+We used JAVA programming language and technologies to implement our solution.
 \begin{flushleft}
 	\bibliographystyle{newapa}
 	\bibliography{bibliography}
