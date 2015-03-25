@@ -244,6 +244,7 @@ public class SessionPanel extends JPanel implements ActionListener
 
 	public void loginSession(String sessionName, char[] password)
 	{
+		textArea1.setText("");	// clean text area with logs
 		try
 		{
 			session = sessionControl.loginSession(sessionName, new String(password));

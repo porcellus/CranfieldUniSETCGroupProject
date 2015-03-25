@@ -9,8 +9,6 @@ import session.OptimizationResult;
 
 import com.jcraft.jsch.*;
 
-import gui.MainWindow;
-
 import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileInputStream;
@@ -95,6 +93,9 @@ public class AstralControl implements OptimizationControl, Runnable {
         if (tunnelSession != null) {
             tunnelSession.disconnect();
         }
+        
+        userField.setText("");
+        passField.setText("");
     }
 
     @Override

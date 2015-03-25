@@ -8,7 +8,6 @@ package liftdrag;
 import javax.swing.UIManager;
 
 import gui.MainFrame;
-import gui.MainWindow;
 import gui.ParamDialog;
 
 import org.apache.commons.cli.*;
