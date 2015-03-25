@@ -3,33 +3,45 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+
 \usepackage{fullpage}
 \usepackage{url}
 \usepackage[numbers,square]{natbib}
 \AtBeginDocument{\renewcommand{\bibname}{References}}
 
-\author{Jacek Czyrnek, Adam Koleszar, Marion Le Guével, Mihaly Lengyel}
+\author{Jacek Czyrnek, Adam Koleszar, Marion Le Guével, Mihaly Lengyel
+•
+}
 \usepackage{graphicx}
+\usepackage{indentfirst}
 \graphicspath{{/home/pandachan/Documents/cours/Group_project/}}
 \title{Group project report}
 
 \begin{document}
 \maketitle
 \tableofcontents
-\chapter{Introduction}
 
+\chapter{Introduction}
+Optimisation process is a big part in the domain of engineering. It applies for a very wide amount of subjects, and for many, it can be a very heavy and long treatment requiering a lot of ressources. That is because of these costs, that a monitoring and recovering system is always needed if any problem could happen during the optimisation process. That way, not all the treatment is lost, and it is not necessary to restart it from the beginning.\\
+
+This project report is dealing with the purpose of its realization in Chapter 1. Then, the previous researches done to define a good recovery system are presented in Chapter 2. Chapter 3 explains what the project needs to provide and Chapter 4 the choices about how to provide it. Finally, Chapter 5 shows what the project actually looks like, Chapter 6 how the testing phase where handled and Chapter 7 what problems where dealed by the team, to end with a conclusion in Chapter 8.\\
+
+The aim of the project itself, is to design and developp a distributed system for monitoring the progress of the aerofoil design optimisation through an intuitive user interface with a login access. The main point is not the optimisation but the recovery system behind it.
+
+As students working in engineering, the objective is to test all the skills needed to do a project. Indeed, not only working in the subject of optimisation or doing an actual monitoring and recovery system, but also working as a team. This means planning and organizing the tasks to design and code the project with a good communication, and finishing with a presentation of what has been done.
 
 \chapter{Technical review}
-We used NASA code \cite{WWW:NASA}.
+
 
 \chapter{Requirements specifications}
-	\subsection{Usecases}
+	\section{Usecases}
 This project handle login as sessions. Therefore each session (a set of iterations) is a new user with a new password.  However, all these "users" are of the same type and have the same functionnalities : \\
-%\includegraphics[scale=0.4]{Usecase_group-project.png}
+\includegraphics[scale=0.4]{Usecase_group-project.png}\\
+
 Mainly, the purpose of this software is to solve an equation with different given parameters and to display the result graphically.
-	\subsection{Functional and non functional requirements}
+	\section{Functional and non functional requirements}
 On the previous usecase, different functionalities are written. This subsection will detailed those functionalities into functional and non functional requirements.
-		\subsubsection{Functional requirements}
+		\subsection{Functional requirements}
 \begin{tabular}{|c|c|}
 \hline 
 \textbf{ID} & \textbf{Requirement} \\ 
@@ -51,7 +63,7 @@ On the previous usecase, different functionalities are written. This subsection 
 8 & As logged in : To logout from a session \\ 
 \hline
 \end{tabular} 
-		\subsubsection{Non-functional requirements}
+		\subsection{Non-functional requirements}
 \begin{tabular}{|c|c|}
 \hline 
 \textbf{Type} & \textbf{Requirement} \\ 
@@ -64,13 +76,13 @@ Reliability & To have a recovery system to access previous steps of a session \\
 Speed & To use a cluster for solving the equation \\ 
 \hline
 \end{tabular} 
-	\subsection{Further information}
+	\section{Further information}
 An example has been given for the software user interface. With the functionalities required, the final product should have two "pages", one for the connexion or creation of a session, and another one once logged in a session, as the mockups below:\\
-%\includegraphics[scale=0.4]{group_project_mockups.png}
+\includegraphics[scale=0.4]{group_project_mockups.png}
 
 \pagebreak
-\section{System design}
-\subsection{Component diagram}
+\chapter{System design}
+\section{Component diagram}
 We began the design process by dividing the system into bigger modules and designing the interfaces between them to conduce parallel work. We split the software into 4 bigger modules and assigned one to each team member:\\
 \begin{enumerate}
 \item Database \& Session: Marion Le Guével
@@ -85,14 +97,14 @@ The following diagram shows the components of the system and the interfaces they
 \end{figure}
 \pagebreak
 
-\subsection{Class diagram}
+\section{Class diagram}
 In the following diagram you can see, that the classes in the implemented system are simple reflections of the component design above.
 \begin{figure}[h!]
 \includegraphics[width=\textwidth]{ClassModel.jpg}
 \caption{Class diagram}
 \end{figure}
 \pagebreak
-\subsection{Sequence diagram}
+\section{Sequence diagram}
 To complement the static diagrams above here we provide a diagram to show the dynamic behaviour of the system. This is not an exact sequence diagram but it shows the flow of data through the system.
 \begin{figure}[h!]
 \includegraphics[width=\textwidth]{SequenceModel.jpg}
@@ -158,5 +170,6 @@ We used JAVA programming language and technologies to implement our solution.
 	\bibliography{bibliography}
 	\addcontentsline{toc}{chapter}{References}
 \end{flushleft}
+
 
 \end{document}
