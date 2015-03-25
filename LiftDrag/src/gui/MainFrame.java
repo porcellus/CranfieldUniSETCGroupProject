@@ -20,7 +20,7 @@ public class MainFrame extends JFrame implements LoginListener, LogoutListener
     	setResizable(false);
 
     	sessionPanel = new SessionPanel();
-    	sessionPanel.setMinimumSize(new Dimension(600, 675));
+    	sessionPanel.setMinimumSize(new Dimension(600, 800));
     	sessionPanel.addLogoutListener(this);
     	getContentPane().add(sessionPanel, BorderLayout.CENTER);
     	
@@ -29,7 +29,6 @@ public class MainFrame extends JFrame implements LoginListener, LogoutListener
     	loginDialog.setVisible(true);
     	
     	getContentPane().setBackground(Color.BLACK);
-    	setTitle("LiftDrag");
     	pack();
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	setLocationRelativeTo(null);
@@ -40,19 +39,20 @@ public class MainFrame extends JFrame implements LoginListener, LogoutListener
 	public void logoutButtonPressed()
 	{
 		sessionPanel.stopSession();
-		
-		loginDialog.setVisible(true);
+
 		this.setVisible(false);	
+		loginDialog.setVisible(true);
 	}
 
 	@Override
 	public void openButtonPressed(String sessionName, char[] password)
 	{
+		setTitle("LiftDrag - session: " + sessionName);
 		loginDialog.setVisible(false);
-		this.setVisible(true);
-
+		
 		sessionPanel.loginSession(sessionName, password);
 		sessionPanel.startSession();
+		this.setVisible(true);
 	}
 
 	@Override

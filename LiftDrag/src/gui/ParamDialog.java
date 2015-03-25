@@ -74,23 +74,23 @@ public class ParamDialog extends JDialog
 		startLabel = new JLabel("Start");
 		
 		camberMinSpinner = new JSpinner();
-		camberMinSpinner.setModel(new SpinnerNumberModel(-20.0, -20.0, 20.0, 0.0));
+		camberMinSpinner.setModel(new SpinnerNumberModel(-20.0, -20.0, 20.0, 0.1));
 		camberMaxSpinner = new JSpinner();
-		camberMaxSpinner.setModel(new SpinnerNumberModel(20.0, -20.0, 20.0, 0.0));
+		camberMaxSpinner.setModel(new SpinnerNumberModel(20.0, -20.0, 20.0, 0.1));
 		camberStartSpinner = new JSpinner();
-		camberStartSpinner.setModel(new SpinnerNumberModel(0.0, -20.0, 20.0, 0.0));
+		camberStartSpinner.setModel(new SpinnerNumberModel(0.0, -20.0, 20.0, 0.1));
 		thicknessMinSpinner = new JSpinner();
-		thicknessMinSpinner.setModel(new SpinnerNumberModel(1.0, 1.0, 20.0, 0.0));
+		thicknessMinSpinner.setModel(new SpinnerNumberModel(1.0, 1.0, 20.0, 0.1));
 		thicknessMaxSpinner = new JSpinner();
-		thicknessMaxSpinner.setModel(new SpinnerNumberModel(20.0, 1.0, 20.0, 0.0));
+		thicknessMaxSpinner.setModel(new SpinnerNumberModel(20.0, 1.0, 20.0, 0.1));
 		thicknessStartSpinner = new JSpinner();
-		thicknessStartSpinner.setModel(new SpinnerNumberModel(10.0, 1.0, 20.0, 0.0));
+		thicknessStartSpinner.setModel(new SpinnerNumberModel(10.0, 1.0, 20.0, 0.1));
 		angleMinSpinner = new JSpinner();
-		angleMinSpinner.setModel(new SpinnerNumberModel(-15.0, -15.0, 15.0, 0.0));
+		angleMinSpinner.setModel(new SpinnerNumberModel(-15.0, -15.0, 15.0, 0.1));
 		angleMaxSpinner = new JSpinner();
-		angleMaxSpinner.setModel(new SpinnerNumberModel(15.0, -15.0, 15.0, 0.0));
+		angleMaxSpinner.setModel(new SpinnerNumberModel(15.0, -15.0, 15.0, 0.1));
 		angleStartSpinner = new JSpinner();
-		angleStartSpinner.setModel(new SpinnerNumberModel(0.0, -15.0, 15.0, 0.0));
+		angleStartSpinner.setModel(new SpinnerNumberModel(0.0, -15.0, 15.0, 0.1));
 		
 		
 		
@@ -184,29 +184,49 @@ public class ParamDialog extends JDialog
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						
-						try
+						if((double) angleMinSpinner.getValue() >= (double) angleMaxSpinner.getValue()
+								|| (double) thicknessMinSpinner.getValue() >= (double) thicknessMaxSpinner.getValue()
+								|| (double) camberMinSpinner.getValue() >= (double) camberMaxSpinner.getValue())
 						{
-							SQLiteConnection database = new SQLiteConnection();
-							database.connection();
-							Session s = database.createSession(sessionName, new String(password));
-							s.setParameters((double) angleMinSpinner.getValue(),
-											(double) angleMaxSpinner.getValue(),
-											(double) thicknessMinSpinner.getValue(),
-											(double) thicknessMaxSpinner.getValue(),
-											(double) camberMinSpinner.getValue(),
-											(double) camberMaxSpinner.getValue());
-	
-							database.setSessionParameters(s);
+							JOptionPane.showMessageDialog(null, "The maximum values must be bigger than minimum values.", "Wrong values", JOptionPane.WARNING_MESSAGE);
+						}
+						else if((double) angleStartSpinner.getValue() < (double) angleMinSpinner.getValue()
+								|| (double) angleStartSpinner.getValue() > (double) angleMaxSpinner.getValue()
+								
+								|| (double) thicknessStartSpinner.getValue() < (double) thicknessMinSpinner.getValue()
+								|| (double) thicknessStartSpinner.getValue() > (double) thicknessMaxSpinner.getValue()
+								
+								|| (double) camberStartSpinner.getValue() < (double) camberMinSpinner.getValue()
+								|| (double) camberStartSpinner.getValue() > (double) camberMaxSpinner.getValue())
+						{
+							JOptionPane.showMessageDialog(null, "The start values must be in between minimum and maximum values.", "Wrong values", JOptionPane.WARNING_MESSAGE);
+						}
+						else
+						{
+							try
+							{
+								SQLiteConnection database = new SQLiteConnection();
+								database.connection();
+								Session s = database.createSession(sessionName, new String(password));
+								s.setParameters((double) angleMinSpinner.getValue(),
+												(double) angleMaxSpinner.getValue(),
+												(double) thicknessMinSpinner.getValue(),
+												(double) thicknessMaxSpinner.getValue(),
+												(double) camberMinSpinner.getValue(),
+												(double) camberMaxSpinner.getValue());
+		
+								database.setSessionParameters(s);
+								
+								JOptionPane.showMessageDialog(null, "Session \"" + sessionName + "\" has been created.");
+							}
+							catch (SQLException ex)
+							{
+								ex.printStackTrace();
+								JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+							}
 							
-							JOptionPane.showMessageDialog(null, "Session \"" + sessionName + "\" has been created.");
-						}
-						catch (SQLException ex)
-						{
-							ex.printStackTrace();
-							JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-						}
-						
-						dispose();
+							dispose();
+						}	
 					}
 				});
 				okButton.setActionCommand("OK");

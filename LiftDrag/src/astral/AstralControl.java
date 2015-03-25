@@ -156,7 +156,7 @@ public class AstralControl implements OptimizationControl, Runnable {
             channel.connect();
             
             if (checkAck(in) != 0) {
-                System.out.println("something's not rigth");
+                System.out.println("something's not right");
                 return;
             }
             System.out.println("1");
@@ -167,7 +167,7 @@ public class AstralControl implements OptimizationControl, Runnable {
             out.flush();
             
             if (checkAck(in) != 0) {
-                System.out.println("something's not rigth");
+                System.out.println("something's not right");
                 return;
             }
             System.out.println("2");
@@ -179,7 +179,7 @@ public class AstralControl implements OptimizationControl, Runnable {
             out.flush();
             
             if (checkAck(in) != 0) {
-                System.out.println("something's not rigth");
+                System.out.println("something's not right");
                 return;
             }
             System.out.println("3");
@@ -200,7 +200,7 @@ public class AstralControl implements OptimizationControl, Runnable {
             out.flush();
             
             if (checkAck(in) != 0) {
-                System.out.println("something's not rigth");
+                System.out.println("something's not right");
                 return;
             }
             System.out.println("4");

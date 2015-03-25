@@ -152,8 +152,25 @@ public class LoginDialog extends JDialog implements ActionListener
 				JOptionPane.showMessageDialog(this, "Password field is empty.", "Wrong password", JOptionPane.ERROR_MESSAGE);
 			else
 			{
-				ParamDialog paramDialog = new ParamDialog((JFrame) getParent(), true, sessionName, password);
-				paramDialog.setVisible(true);
+				try
+				{
+					SQLiteConnection database = new SQLiteConnection();
+					database.connection();
+					if(!database.isSessionExisting(sessionName))
+					{
+						ParamDialog paramDialog = new ParamDialog((JFrame) getParent(), true, sessionName, password);
+						paramDialog.setVisible(true);
+					}
+					else
+						JOptionPane.showMessageDialog(null, "This session name is already used for another session.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				catch (SQLException ex)
+				{
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				
 			}
 			
 			Arrays.fill(password, '0');

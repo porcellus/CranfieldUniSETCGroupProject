@@ -19,5 +19,5 @@ public interface SessionControl {
     public abstract void setSessionParameters(Session s);
     public abstract void setResult(OptimizationResult result, int id);
     public abstract OptimizationResult getResult(int number, int id);
-    public abstract int maxIteration(int id);
+    public abstract int getIterationNum(int id);
 }

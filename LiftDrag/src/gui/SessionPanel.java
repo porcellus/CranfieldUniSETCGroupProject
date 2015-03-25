@@ -47,15 +47,15 @@ public class SessionPanel extends JPanel implements ActionListener
 	private SessionControl sessionControl;
 	private final OptimizationControl optControl;
 	private WingPanel wingPanel;
-	private JButton startButton;
 	private Boolean sessionRunning;
 	
 	private JScrollPane textArea1Pane;
 	private JTextArea textArea1;
 	private JScrollPane textArea2Pane;
-	private JTextArea textArea2;
-	private JRadioButton radioButton;
-	private JRadioButton radioButton_1;
+	private JRadioButton connectedRadioButton;
+	private JRadioButton runningRadioButton;
+	private JLabel connectionStatusLabel;
+	private JLabel computationStatuslabel;
 	
 	/**
 	 * Create the panel.
@@ -65,16 +65,11 @@ public class SessionPanel extends JPanel implements ActionListener
 		sessionRunning = false;
 		optControl = new AstralControl((JFrame) this.getParent());
 		wingPanel = new WingPanel();
-		wingPanel.start();
 		
 		logButton = new JButton("Download logs");
 		logButton.addActionListener(this);
 		logoutButton = new JButton("Logout");
 		logoutButton.addActionListener(this);
-		
-		startButton = new JButton("Start");
-		startButton.setVisible(false);
-		startButton.addActionListener(this);
 		
 		JScrollPane textArea1Pane = new JScrollPane();
 		textArea1Pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -86,23 +81,17 @@ public class SessionPanel extends JPanel implements ActionListener
 		textArea1.setFont(new Font("Monospaced", Font.PLAIN, 16));
 		textArea1Pane.setViewportView(textArea1);
 		
-		JScrollPane textArea2Pane = new JScrollPane();
-		textArea2Pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		textArea2Pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		textArea2Pane.setFont(new Font("Monospaced", Font.PLAIN, 16));
+		connectedRadioButton = new JRadioButton("");
+		connectedRadioButton.setSelected(false);
+		connectedRadioButton.setEnabled(false);
 		
-		textArea2 = new JTextArea();
-		textArea2.setEditable(false);
-		textArea2.setFont(new Font("Monospaced", Font.PLAIN, 16));
-		textArea2Pane.setViewportView(textArea2);
+		runningRadioButton = new JRadioButton("");
+		runningRadioButton.setSelected(false);
+		runningRadioButton.setEnabled(false);
 		
-		radioButton = new JRadioButton("");
-		radioButton.setSelected(true);
-		radioButton.setEnabled(false);
+		connectionStatusLabel = new JLabel("Connection status:");
 		
-		radioButton_1 = new JRadioButton("");
-		radioButton_1.setEnabled(false);
-		radioButton_1.setSelected(true);
+		computationStatuslabel = new JLabel("Computation status:");
 		
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
@@ -110,26 +99,26 @@ public class SessionPanel extends JPanel implements ActionListener
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(logButton)
-					.addGap(166)
-					.addComponent(startButton, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 211, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 540, Short.MAX_VALUE)
 					.addComponent(logoutButton)
 					.addContainerGap())
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(wingPanel, GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
-					.addGap(336))
+					.addComponent(wingPanel, GroupLayout.PREFERRED_SIZE, 367, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(421, Short.MAX_VALUE))
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(160)
-					.addComponent(radioButton)
-					.addGap(309)
-					.addComponent(radioButton_1)
-					.addContainerGap(156, Short.MAX_VALUE))
+					.addGap(105)
+					.addComponent(connectionStatusLabel)
+					.addGap(8)
+					.addComponent(connectedRadioButton)
+					.addPreferredGap(ComponentPlacement.RELATED, 253, Short.MAX_VALUE)
+					.addComponent(computationStatuslabel)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(runningRadioButton)
+					.addGap(105))
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(textArea1Pane, GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
-					.addGap(18)
-					.addComponent(textArea2Pane, GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+					.addComponent(textArea1Pane, GroupLayout.DEFAULT_SIZE, 726, Short.MAX_VALUE)
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -137,25 +126,22 @@ public class SessionPanel extends JPanel implements ActionListener
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-							.addComponent(logButton)
-							.addComponent(logoutButton))
-						.addComponent(startButton))
+						.addComponent(logButton)
+						.addComponent(logoutButton))
 					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(textArea2Pane, GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
-						.addComponent(textArea1Pane, GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE))
+					.addComponent(textArea1Pane, GroupLayout.PREFERRED_SIZE, 233, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addPreferredGap(ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-							.addComponent(radioButton)
-							.addGap(11)
-							.addComponent(wingPanel, GroupLayout.PREFERRED_SIZE, 264, GroupLayout.PREFERRED_SIZE)
-							.addContainerGap())
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(19)
-							.addComponent(radioButton_1)
-							.addContainerGap())))
+							.addGap(4)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(computationStatuslabel, Alignment.TRAILING)
+								.addComponent(connectionStatusLabel, Alignment.TRAILING)))
+						.addComponent(connectedRadioButton)
+						.addComponent(runningRadioButton))
+					.addGap(9)
+					.addComponent(wingPanel, GroupLayout.PREFERRED_SIZE, 255, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap())
 		);
 		
 		setLayout(groupLayout);
@@ -173,12 +159,33 @@ public class SessionPanel extends JPanel implements ActionListener
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		if (optControl.getStatus() == OptimizationControl.RUNNING) {
+		
+		if (optControl.getStatus() == OptimizationControl.RUNNING)
+		{
+			connectedRadioButton.setSelected(true);
+			runningRadioButton.setSelected(true);
             wingPanel.setParameters(optControl.readResults());
             //resultPanel.updateResult(optControl.readResults());
-            if (session != null) session.logResult(optControl.readResults());
+            if (session != null)
+            {
+            	session.logResult(optControl.readResults());
+            	textArea1.append(optControl.readResults().toString() + "\n");
+            }
             repaint();
         }
+		else if(optControl.getStatus() == OptimizationControl.CONNECTING)
+		{
+			if(!connectedRadioButton.isSelected())
+				connectedRadioButton.setSelected(true);
+			else
+				connectedRadioButton.setSelected(false);
+			runningRadioButton.setSelected(false);
+		}
+		else if (optControl.getStatus() == OptimizationControl.READY)
+		{
+			connectedRadioButton.setSelected(false);
+			runningRadioButton.setSelected(false);
+		}
 		
 		if(e.getSource() == logoutButton && logoutListener != null)
 		{
@@ -190,7 +197,7 @@ public class SessionPanel extends JPanel implements ActionListener
 			
 			if(choice == 0)
 			{
-				// TODO: Terminate session
+				stopSession();
 				logoutListener.logoutButtonPressed();
 			}
 			
@@ -233,27 +240,6 @@ public class SessionPanel extends JPanel implements ActionListener
 				}
 			}
 		}
-		else if(e.getSource() == startButton)
-		{
-			if(sessionRunning == false)
-			{
-				// TODO: pass credentials and start session
-				//optControl.startSession("gewsd", "gesdv");
-				
-				sessionRunning = true;
-				startButton.setText("Stop");
-			}
-			else
-			{
-				wingPanel.setParameters((int)(Math.random() * 20),
-                        (int)(Math.random() * 20),
-                        (int)(Math.random() * 30 - 15));
-				optControl.stopSession();
-				
-				sessionRunning = false;
-				startButton.setText("Start");
-			}
-		}
 	}
 
 	public void loginSession(String sessionName, char[] password)
@@ -282,9 +268,7 @@ public class SessionPanel extends JPanel implements ActionListener
 	}
 	
 	public void stopSession() {
-		wingPanel.setParameters(optControl.readResults());
+		//wingPanel.setParameters(optControl.readResults());
         optControl.stopSession();
     }
-
-
 }

@@ -140,6 +140,25 @@ public class SQLiteConnection implements SessionControl{
         
         return null;
     }
+    
+    public Boolean isSessionExisting(String username) throws SQLException 
+    {
+            //check if username existing
+            stmt = c.createStatement();
+            String sql="SELECT COUNT(ID) AS EXISTING FROM SESSION WHERE NAME=\""+username+"\" ;";
+            ResultSet rs = stmt.executeQuery(sql);
+            if(rs.getInt("EXISTING")!=0){
+                rs.close();
+                stmt.close();
+                return true;
+            }
+            else
+            {
+            	rs.close();
+            	stmt.close();
+            	return false;
+            }
+    }
 
     @Override
     public void setSessionParameters(Session s) {//save the attributes of s into the db
@@ -172,7 +191,10 @@ public class SQLiteConnection implements SessionControl{
             rs.close();
             //add the new result as an iteration
             c.setAutoCommit(false);
-            sql = "INSERT INTO ITERATION (SESSION, ANGLE, CAMBER, THICKNESS, LIFT, DRAG, NUM) VALUES ("+ id +", "+ result.getAngle() +", "+ result.getCamber() +", "+ result.getThickness() +", "+ result.getLift() +", "+ result.getDrag() +", "+num+");";
+            sql = "INSERT INTO ITERATION (SESSION, ANGLE, CAMBER, THICKNESS, "
+                + "LIFT, DRAG, NUM) VALUES ("+ id +", "+ result.angle +", "
+                + result.camber +", "+ result.thickness +", "+ result.lift +", "
+                + result.drag +", "+num+");";
             stmt.executeUpdate(sql);
             c.commit();
             stmt.close();
@@ -190,7 +212,8 @@ public class SQLiteConnection implements SessionControl{
             //try to find the iteration
             c.setAutoCommit(false);
             stmt = c.createStatement();
-            String sql="SELECT ANGLE, CAMBER, THICKNESS, LIFT, DRAG FROM ITERATION WHERE SESSION="+id+" AND NUM="+number+" ;";
+			String sql = "SELECT ANGLE, CAMBER, THICKNESS, LIFT, DRAG "
+                       + "FROM ITERATION WHERE SESSION="+id+" AND NUM="+number+" ;";
             ResultSet rs = stmt.executeQuery( sql );
             while(rs.next()){//if it exists return the result
               OptimizationResult res = new OptimizationResult();
@@ -210,7 +233,8 @@ public class SQLiteConnection implements SessionControl{
         return null;
     }
     
-    public int maxIteration(int id){//find the number of iteration already existing for this session
+	@Override
+	public int getIterationNum(int id){//find the number of iteration already existing for this session
         Statement stmt = null;
         try {
             stmt = c.createStatement();
