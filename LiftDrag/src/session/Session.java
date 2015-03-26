@@ -76,6 +76,18 @@ public class Session implements SessionInfo, Logging {
         }
         return log;
     }
+    
+    public String getLogToString(int a, int b) {
+        //database call through control
+    	StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i=a, num=0; i<b; ++i, ++num) {
+            stringBuilder.append("Iteration=" + num + " " + control.getResult(i, id) + "\n");
+        }
+
+       String log = stringBuilder.toString();
+        return log;
+    }
 
     @Override
     public void logResult(OptimizationResult r) {
