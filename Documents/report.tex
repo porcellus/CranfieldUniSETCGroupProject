@@ -14,7 +14,6 @@
 }
 \usepackage{graphicx}
 \usepackage{indentfirst}
-\graphicspath{{/home/pandachan/Documents/cours/Group_project/}}
 \title{Group project report}
 
 \begin{document}
@@ -24,19 +23,51 @@
 \chapter{Introduction}
 Optimisation process is a big part in the domain of engineering. It applies for a very wide amount of subjects, and for many, it can be a very heavy and long treatment requiering a lot of ressources. That is because of these costs, that a monitoring and recovering system is always needed if any problem could happen during the optimisation process. That way, not all the treatment is lost, and it is not necessary to restart it from the beginning.\\
 
-This project report is dealing with the purpose of its realization in Chapter 1. Then, the previous researches done to define a good recovery system are presented in Chapter 2. Chapter 3 explains what the project needs to provide and Chapter 4 the choices about how to provide it. Finally, Chapter 5 shows what the project actually looks like, Chapter 6 how the testing phase where handled and Chapter 7 what problems where dealed by the team, to end with a conclusion in Chapter 8.\\
+This project report is dealing with the purpose of its realization in Chapter 1. Then, the previous researches done to define a good recovery system are presented in Chapter 2. Chapter 3 explains what the project needs to provide and Chapter 4 the choices about how to provide it. Finally, Chapter 5 shows what the project actually looks like, Chapter 6 how the testing phase where handled and Chapter 7 what problems where encountered by the team, to end with a conclusion in Chapter 8.\\
 
 The aim of the project itself, is to design and developp a distributed system for monitoring the progress of the aerofoil design optimisation through an intuitive user interface with a login access. The main point is not the optimisation but the recovery system behind it.
 
-As students working in engineering, the objective is to test all the skills needed to do a project. Indeed, not only working in the subject of optimisation or doing an actual monitoring and recovery system, but also working as a team. This means planning and organizing the tasks to design and code the project with a good communication, and finishing with a presentation of what has been done.
+As students working in engineering, the objective is to test all the skills needed to do a project. Indeed, it's not only about working in the subject of optimisation or doing an actual monitoring and recovery system, but also working as a team. This means planning and organizing the tasks to design and code the project with a good communication, and finishing with a presentation of what has been done.
 
 \chapter{Technical review}
+All computer systems are composed of many subsystems which can encounter problem or failure preventing them to do their tasks. Because of this, those systems can stop working and, then, loose all their data and progression.
+
+That's why every reliable and secure system takes into account the risk of sudden failure of any of its component. Most of the time, it includes communication between those components and action depending on the analysis of the failure. However, the monitoring and recovery plan is different for each system as each system as its own design and components. Therefore many approaches has been implemented to handle different events of numerous examples of systems. 
+
+	\section{Automatic action}
+		\subsection{Cluster environment}
+Cluster systems are complex in a way that it is a distributed environment. This means that there are a lot of independent components communicating together for one common result. Failures can, then, appear on many places. 
+
+A way to locate an error is through a heartbeat protocole [1][2] which makes each component send a signal at regular intervals to another one. As soon as the error has been detected, there are different options. 
+Some recovery softwares already exist, but there are very expensive and it requiers to install it on every node, paying for each of them [1].
+You can have a recovery driver which will analyze and execute recovery actions [1]. If it fails, it will complete the remaining actions anyway. 
+There is also a possibility to use a spare server to take over the job. If the heartbeat signal stops, the spare server will do the job instead of the one crashed. However, it means that there is a server inactive most of the time, waiting for a failure, which is a waste of money. This is why Dias [2] proposes to use a spare server which is actually working with the others even when there is no failure.
+
+		\subsection{Software environment}
+Software environment can be on a server or on a local machine. It is quite a large form which includes different type of faults. Delgado [3] exposes the classification of the software fault monitoring system. She explains the use of graphs to detect the violation and call the good function in Java depending of the fault to, finally, enforced the synchronization. To evaluate the error, some measures can be used like tasks performance or other metrics [4]. A pre-compiler can also be used to correct errors automatically [5] or a "self-healing" method which reverse faulty until failure is avoided [6].
+		
+	\section{User action}	
+Many errors can be easily detected during the execution of the system, and, then, automatically handled with pre-determined solutions (see previous section). For other types of errors, it requiers the intervention of a human being. 
+
+In a computing environment, a hot key can be selected by the end user at pre-boot or runtime phase to perform a precise recovery action [7]. This solution is limited by the technical level of the end user as well as the configuration of the computer. 
+
+In a database, once a wrong request has been executed most of the time the only solution is to restore the full database. All the wrong actions are, then, deleted, but also some good ones. Thus, the consistency is lost. Zwilling [8] suggests to regularly create some snapshots of the change in the database (and not all of it) and some more on specific events. That way, a human being can just go back through some snapshots and find the one that shouldn't be executed without loosing all the other changes.
+
+	\section{Previous researches and current project}
+The current project uses an educational Java code from NASA modified to correspond to the current system. This part of the execution is runned on a cluster (see Implementation Chapter) but there is no possibility to manage it. That is why handle possible errors can't be done at the infrastructure level. The solution of the logs on the server is the best in this case to track the error and recover from it. 
+
+The main part of the software is on local machine. Therefore, all the results are stored in a local database file. If an error appears in the database, the logs can also restore it.
+
 
 
 \chapter{Requirements specifications}
 	\section{Usecases}
 This project handle login as sessions. Therefore each session (a set of iterations) is a new user with a new password.  However, all these "users" are of the same type and have the same functionnalities : \\
-\includegraphics[scale=0.4]{Usecase_group-project.png}\\
+\begin{figure}[h!]
+\includegraphics[scale=0.7]{Usecase_group-project.png}\\
+\caption{Usecase}
+\end{figure}
+
 
 Mainly, the purpose of this software is to solve an equation with different given parameters and to display the result graphically.
 	\section{Functional and non functional requirements}
@@ -78,7 +109,11 @@ Speed & To use a cluster for solving the equation \\
 \end{tabular} 
 	\section{Further information}
 An example has been given for the software user interface. With the functionalities required, the final product should have two "pages", one for the connexion or creation of a session, and another one once logged in a session, as the mockups below:\\
-\includegraphics[scale=0.4]{group_project_mockups.png}
+\begin{figure}[h!]
+\includegraphics[scale=0.5]{group_project_mockups.png}
+\caption{Mockup}
+\end{figure}
+
 
 \pagebreak
 \chapter{System design}
