@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -33,29 +34,42 @@ import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.JRadioButton;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.time.DynamicTimeSeriesCollection;
+import org.jfree.data.time.Second;
+import org.jfree.data.xy.DefaultXYDataset;
+import org.jfree.data.xy.XYDataset;
+
 import database.SQLiteConnection;
 import database.SessionControl;
 
 public class SessionPanel extends JPanel implements ActionListener
 {
-	private JButton logButton;
-	private JButton logoutButton;
-	
 	private LogoutListener logoutListener;
 	
 	private Session session;
 	private SessionControl sessionControl;
 	private final OptimizationControl optControl;
-	private WingPanel wingPanel;
 	private Boolean sessionRunning;
 	
+	private JButton logButton;
+	private JButton logoutButton;
 	private JScrollPane textArea1Pane;
 	private JTextArea textArea1;
-	private JScrollPane textArea2Pane;
 	private JRadioButton connectedRadioButton;
 	private JRadioButton runningRadioButton;
 	private JLabel connectionStatusLabel;
 	private JLabel computationStatuslabel;
+	
+	private WingPanel wingPanel;
+	private ChartPanel chartPanel;
+	private DynamicTimeSeriesCollection dataset;
 	
 	/**
 	 * Create the panel.
@@ -66,6 +80,24 @@ public class SessionPanel extends JPanel implements ActionListener
 		optControl = new AstralControl((JFrame) this.getParent());
 		wingPanel = new WingPanel();
 		
+		// PLOT CONSTRUCTION
+			dataset = new DynamicTimeSeriesCollection(1, 120, new Second());
+	
+	        dataset.setTimeBase(new Second(0, 0, 0, 26, 3, 2015));
+	        dataset.addSeries(new float[1], 0, "lift/drag");
+			
+	        JFreeChart chart = ChartFactory.createXYLineChart(null,
+	                "iteration", "", dataset, PlotOrientation.VERTICAL, true, false,
+	                false);
+	        
+	        final XYPlot plot = chart.getXYPlot();
+	        
+	        ValueAxis domain = plot.getDomainAxis();
+	        domain.setVisible(false);
+	
+	        chartPanel = new ChartPanel(chart);
+        // ------      
+        
 		logButton = new JButton("Download logs");
 		logButton.addActionListener(this);
 		logoutButton = new JButton("Logout");
@@ -93,32 +125,35 @@ public class SessionPanel extends JPanel implements ActionListener
 		
 		computationStatuslabel = new JLabel("Computation status:");
 		
+		
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(logButton)
-					.addPreferredGap(ComponentPlacement.RELATED, 540, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 590, Short.MAX_VALUE)
 					.addComponent(logoutButton)
 					.addContainerGap())
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(wingPanel, GroupLayout.PREFERRED_SIZE, 367, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(421, Short.MAX_VALUE))
+					.addComponent(wingPanel, GroupLayout.PREFERRED_SIZE, 378, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(chartPanel, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+					.addContainerGap())
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(105)
 					.addComponent(connectionStatusLabel)
 					.addGap(8)
 					.addComponent(connectedRadioButton)
-					.addPreferredGap(ComponentPlacement.RELATED, 253, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 303, Short.MAX_VALUE)
 					.addComponent(computationStatuslabel)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(runningRadioButton)
 					.addGap(105))
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(textArea1Pane, GroupLayout.DEFAULT_SIZE, 726, Short.MAX_VALUE)
+					.addComponent(textArea1Pane, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -139,13 +174,15 @@ public class SessionPanel extends JPanel implements ActionListener
 								.addComponent(connectionStatusLabel, Alignment.TRAILING)))
 						.addComponent(connectedRadioButton)
 						.addComponent(runningRadioButton))
-					.addGap(9)
-					.addComponent(wingPanel, GroupLayout.PREFERRED_SIZE, 255, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+						.addComponent(chartPanel, GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
+						.addComponent(wingPanel, GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		
 		setLayout(groupLayout);
-
+		
 		Timer timer = new Timer(100, this);
         timer.start();
         sessionControl = new SQLiteConnection();
@@ -170,6 +207,14 @@ public class SessionPanel extends JPanel implements ActionListener
             {
             	session.logResult(optControl.readResults());
             	textArea1.append(optControl.readResults().toString() + "\n");
+            	
+            	if(dataset != null)
+            	{
+            		float[] toAppend = new float[1];
+            		toAppend[0] = (float) optControl.readResults().getLiftDrag();
+            		dataset.advanceTime();
+                	dataset.appendData(toAppend);
+            	}
             }
             repaint();
         }
@@ -205,40 +250,70 @@ public class SessionPanel extends JPanel implements ActionListener
 		}
 		else if(e.getSource() == logButton)
 		{
+			int numOfLogsToSave = 100;
 			// TODO: get logs
-			
-			JFrame parentFrame = new JFrame();
-			
-			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.setDialogTitle("Save the logs...");  
-			fileChooser.setSelectedFile(new File("logs.txt"));
-			
-			int userSelection = fileChooser.showSaveDialog(parentFrame);
-			 
-			if (userSelection == JFileChooser.APPROVE_OPTION) {
-			    File fileToSave = fileChooser.getSelectedFile();
-		    
-				try
-				{
-					PrintWriter writer = new PrintWriter(fileToSave.getAbsolutePath(), "UTF-8");
-					// TODO: print logs to file
-					writer.println("first log");
-					writer.println("second log");
-					writer.close();
-					
-					JOptionPane.showMessageDialog(new JFrame(),
-						    "The logs have been successfully saved to " + fileToSave.getName() + ".",
-						    "Logs saved",
-						    JOptionPane.INFORMATION_MESSAGE);
-
-				} catch (IOException ex)
-				{
-					JOptionPane.showMessageDialog(new JFrame(),
-						    ex.getMessage(),
-						    "Error while saving",
-						    JOptionPane.ERROR_MESSAGE);  
+			if(session != null)
+			{
+				stopSession();
+				
+				int lastIteration = sessionControl.getIterationNum(session.getId());
+				int firstIteration = lastIteration - numOfLogsToSave;
+				if(firstIteration < 0)
+					firstIteration = 0;
+				
+				System.out.println(firstIteration);
+				System.out.println(lastIteration);
+				
+				JFrame parentFrame = new JFrame();
+				
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Save the logs...");  
+				fileChooser.setSelectedFile(new File(session.getSessionName() + " logs.txt"));
+				
+				int userSelection = fileChooser.showSaveDialog(parentFrame);
+				 
+				if (userSelection == JFileChooser.APPROVE_OPTION) {
+				    File fileToSave = fileChooser.getSelectedFile();
+			    
+					try
+					{
+						String logs = session.getLogToString(firstIteration, lastIteration);
+						
+						
+						PrintWriter writer = new PrintWriter(fileToSave.getAbsolutePath(), "UTF-8");
+						// TODO: print logs to file
+						writer.println("SessionName: " + session.getSessionName());
+						writer.println("MinAngle: " + session.getMinangle());
+						writer.println("MaxAngle: " + session.getMaxangle());
+						writer.println("MinThickness: " + session.getMinthickness());
+						writer.println("MaxThickness: " + session.getMaxthickness());
+						writer.println("MinCamber: " + session.getMincamber());
+						writer.println("MaxCamber: " + session.getMaxcamber());
+						writer.println();
+						writer.print(logs);
+						writer.close();
+						
+						JOptionPane.showMessageDialog(new JFrame(),
+							    "The last " + (lastIteration - firstIteration)
+							    + " logs have been successfully saved to "
+							    + fileToSave.getName() + ".",
+							    "Logs saved",
+							    JOptionPane.INFORMATION_MESSAGE);
+	
+					} catch (IOException ex)
+					{
+						JOptionPane.showMessageDialog(new JFrame(),
+							    ex.getMessage(),
+							    "Error while saving",
+							    JOptionPane.ERROR_MESSAGE);  
+					}
 				}
 			}
+			else
+				JOptionPane.showMessageDialog(new JFrame(),
+					    "There are no logs available.",
+					    "Error while getting logs",
+					    JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -248,6 +323,13 @@ public class SessionPanel extends JPanel implements ActionListener
 		try
 		{
 			session = sessionControl.loginSession(sessionName, new String(password));
+			if(session != null)
+				textArea1.setText("MinAngle: " + session.getMinangle() + "\n"
+						+ "MaxAngle: " + session.getMaxangle() + "\n"
+						+ "MinThickness: " + session.getMinthickness() + "\n"
+						+ "MaxThickness: " + session.getMaxthickness() + "\n"
+						+ "MinCamber: " + session.getMincamber() + "\n"
+						+ "MaxCamber: " + session.getMaxcamber());
 		}
 		catch (SQLException ex)
 		{

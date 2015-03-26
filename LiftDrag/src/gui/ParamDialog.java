@@ -37,17 +37,13 @@ public class ParamDialog extends JDialog
 	private JLabel angleLabel;
 	private JLabel minLabel;
 	private JLabel maxLabel;
-	private JLabel startLabel;
 	
 	private JSpinner camberMinSpinner;
 	private JSpinner camberMaxSpinner;
-	private JSpinner camberStartSpinner;
 	private JSpinner thicknessMinSpinner;
 	private JSpinner thicknessMaxSpinner;
-	private JSpinner thicknessStartSpinner;
 	private JSpinner angleMinSpinner;
 	private JSpinner angleMaxSpinner;
-	private JSpinner angleStartSpinner;
 	
 	/**
 	 * Create the dialog.
@@ -58,7 +54,7 @@ public class ParamDialog extends JDialog
 		setResizable(false);
 		
 		setTitle("Input parameters");
-		setBounds(100, 100, 370, 240);
+		setBounds(100, 100, 300, 240);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -71,26 +67,19 @@ public class ParamDialog extends JDialog
 		
 		minLabel = new JLabel("Min");
 		maxLabel = new JLabel("Max");
-		startLabel = new JLabel("Start");
 		
 		camberMinSpinner = new JSpinner();
 		camberMinSpinner.setModel(new SpinnerNumberModel(-20.0, -20.0, 20.0, 0.1));
 		camberMaxSpinner = new JSpinner();
 		camberMaxSpinner.setModel(new SpinnerNumberModel(20.0, -20.0, 20.0, 0.1));
-		camberStartSpinner = new JSpinner();
-		camberStartSpinner.setModel(new SpinnerNumberModel(0.0, -20.0, 20.0, 0.1));
 		thicknessMinSpinner = new JSpinner();
 		thicknessMinSpinner.setModel(new SpinnerNumberModel(1.0, 1.0, 20.0, 0.1));
 		thicknessMaxSpinner = new JSpinner();
 		thicknessMaxSpinner.setModel(new SpinnerNumberModel(20.0, 1.0, 20.0, 0.1));
-		thicknessStartSpinner = new JSpinner();
-		thicknessStartSpinner.setModel(new SpinnerNumberModel(10.0, 1.0, 20.0, 0.1));
 		angleMinSpinner = new JSpinner();
 		angleMinSpinner.setModel(new SpinnerNumberModel(-15.0, -15.0, 15.0, 0.1));
 		angleMaxSpinner = new JSpinner();
 		angleMaxSpinner.setModel(new SpinnerNumberModel(15.0, -15.0, 15.0, 0.1));
-		angleStartSpinner = new JSpinner();
-		angleStartSpinner.setModel(new SpinnerNumberModel(0.0, -15.0, 15.0, 0.1));
 		
 		
 		
@@ -98,9 +87,9 @@ public class ParamDialog extends JDialog
 		gl_contentPanel.setHorizontalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addContainerGap(25, Short.MAX_VALUE)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
+					.addGap(30)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
 								.addComponent(camberLabel)
 								.addComponent(thicknessLabel)
@@ -110,7 +99,7 @@ public class ParamDialog extends JDialog
 								.addComponent(angleMinSpinner)
 								.addComponent(camberMinSpinner)
 								.addComponent(thicknessMinSpinner)))
-						.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
+						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addComponent(minLabel)
 							.addGap(18)))
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
@@ -123,41 +112,21 @@ public class ParamDialog extends JDialog
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addGap(35)
 							.addComponent(maxLabel)))
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addGap(18)
-							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING, false)
-								.addComponent(angleStartSpinner)
-								.addComponent(camberStartSpinner)
-								.addComponent(thicknessStartSpinner)))
-						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addGap(32)
-							.addComponent(startLabel)))
-					.addContainerGap(51, Short.MAX_VALUE))
+					.addContainerGap(50, Short.MAX_VALUE))
 		);
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addContainerGap(21, Short.MAX_VALUE)
+				.addGroup(Alignment.LEADING, gl_contentPanel.createSequentialGroup()
+					.addContainerGap()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-								.addComponent(startLabel)
-								.addComponent(maxLabel))
+							.addComponent(maxLabel)
 							.addGap(18)
-							.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-								.addGroup(gl_contentPanel.createSequentialGroup()
-									.addComponent(camberStartSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(thicknessStartSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(angleStartSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-								.addGroup(gl_contentPanel.createSequentialGroup()
-									.addComponent(camberMaxSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addGap(13)
-									.addComponent(thicknessMaxSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addGap(13)
-									.addComponent(angleMaxSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+							.addComponent(camberMaxSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(13)
+							.addComponent(thicknessMaxSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(13)
+							.addComponent(angleMaxSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addComponent(minLabel)
 							.addGap(18)
@@ -172,7 +141,7 @@ public class ParamDialog extends JDialog
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 								.addComponent(angleMinSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addComponent(angleLabel))))
-					.addContainerGap())
+					.addContainerGap(21, Short.MAX_VALUE))
 		);
 		contentPanel.setLayout(gl_contentPanel);
 		{
@@ -189,17 +158,6 @@ public class ParamDialog extends JDialog
 								|| (double) camberMinSpinner.getValue() >= (double) camberMaxSpinner.getValue())
 						{
 							JOptionPane.showMessageDialog(null, "The maximum values must be bigger than minimum values.", "Wrong values", JOptionPane.WARNING_MESSAGE);
-						}
-						else if((double) angleStartSpinner.getValue() < (double) angleMinSpinner.getValue()
-								|| (double) angleStartSpinner.getValue() > (double) angleMaxSpinner.getValue()
-								
-								|| (double) thicknessStartSpinner.getValue() < (double) thicknessMinSpinner.getValue()
-								|| (double) thicknessStartSpinner.getValue() > (double) thicknessMaxSpinner.getValue()
-								
-								|| (double) camberStartSpinner.getValue() < (double) camberMinSpinner.getValue()
-								|| (double) camberStartSpinner.getValue() > (double) camberMaxSpinner.getValue())
-						{
-							JOptionPane.showMessageDialog(null, "The start values must be in between minimum and maximum values.", "Wrong values", JOptionPane.WARNING_MESSAGE);
 						}
 						else
 						{
