@@ -23,11 +23,21 @@
 \chapter{Introduction}
 Optimisation process is a big part in the domain of engineering. It applies for a very wide amount of subjects, and for many, it can be a very heavy and long treatment requiering a lot of ressources. That is because of these costs, that a monitoring and recovering system is always needed if any problem could happen during the optimisation process. That way, not all the treatment is lost, and it is not necessary to restart it from the beginning.\\
 
-This project report is dealing with the purpose of its realization in Chapter 1. Then, the previous researches done to define a good recovery system are presented in Chapter 2. Chapter 3 explains what the project needs to provide and Chapter 4 the choices about how to provide it. Finally, Chapter 5 shows what the project actually looks like, Chapter 6 how the testing phase where handled and Chapter 7 what problems where encountered by the team, to end with a conclusion in Chapter 8.\\
+This project report is dealing with the purpose of its realization in Chapter 1. Then, the previous researches done to define a good recovery system are presented in Chapter 2. Chapter 3 explains what the project needs to provide, and Chapter 4 the choices about how to provide it. Finally, Chapter 5 shows what the project actually looks like, Chapter 6 how the testing phase were handled, and Chapter 7 what problems were encountered by the team, to end with a conclusion in Chapter 8.\\
 
-The aim of the project itself, is to design and developp a distributed system for monitoring the progress of the aerofoil design optimisation through an intuitive user interface with a login access. The main point is not the optimisation but the recovery system behind it.
+	\section{Aim and objectives}
+The aim of the project itself is to design and develop a distributed system for monitoring the progress of the aerofoil design optimisation through an intuitive user interface with a login access. The main point is not the optimisation, but the recovery system behind it.
 
-As students working in engineering, the objective is to test all the skills needed to do a project. Indeed, it's not only about working in the subject of optimisation or doing an actual monitoring and recovery system, but also working as a team. This means planning and organizing the tasks to design and code the project with a good communication, and finishing with a presentation of what has been done.
+As students working in engineering, the objective is to test all the skills needed to do a project. Indeed, it's not only about working in the subject of optimisation or doing an actual monitoring and recovery system, but also working as a team. This means planning and organizing the tasks to design and code the project with a good communication, and to finish with a presentation of what has been done.
+	
+	\section{Distribution of work}
+For the documentation of this project, tasks has been splited as below :
+\begin{itemize}
+  \item Adam : Chapter Implementation, Chapter Failure case studies, Chapter Conclusion  
+  \item Jacek : Technical review researches, Chapter Implementation, Chapter System testing, Installation and operational manual
+  \item Marion : Technical review researches, Chapter Introduction, Chapter Technical review, Chapter Requirement specifications
+  \item Mihaly : Technical review researches, Chapter System design
+\end{itemize}
 
 \chapter{Technical review}
 All computer systems are composed of many subsystems which can encounter problem or failure preventing them to do their tasks. Because of this, those systems can stop working and, then, loose all their data and progression.
@@ -118,35 +128,40 @@ An example has been given for the software user interface. With the functionalit
 \pagebreak
 \chapter{System design}
 \section{Component diagram}
-We began the design process by dividing the system into bigger modules and designing the interfaces between them to conduce parallel work. We split the software into 4 bigger modules and assigned one to each team member:\\
-\begin{enumerate}
-\item Database \& Session: Marion Le Guével
-\item Atlas Connector: Ádám Koleszár
-\item GUI: Jacek Czyrnek
-\item Wing Visualizer: Mihály Lengyel
-\end{enumerate}
-The following diagram shows the components of the system and the interfaces they interact through.
+We began the design process by dividing the system into bigger modules and designing concrete interfaces between them to conduce parallel work. The following diagram shows the components of the system and the interfaces they interact through.\\
 \begin{figure}[h!]
 \includegraphics[width=\textwidth]{CompModel.jpg}
 \caption{Component diagram}
 \end{figure}
+ We split the software into 4 bigger modules and assigned one to each team member:\\
+\subsection{Database \& Session: Marion Le Guével}
+These parts of the system are responsible to abstract away the database and session handling. The Database module connects the system to a local database and it provides interface to handle the creation and log in of the sessions and logging the results of the optimization. The Session is a simple module, a single class in essence, that is used to pass session information around and to log the  results. To make logging possible it depends on the interface provided by the Database module.
+\subsection{Atlas Connector: Ádám Koleszár}
+The AtlasConnector module abstracts away the network connection and communication handling. It connects the system to Atlas and runs the optimizer on it. It reads the results and logs these in the provided Session. It provides an interface to start and stop an optimization session and requires the logging interface of the Session module to communicate the results of the optimization back to the system. Starting an optimization session is an async operation, it does everything in a new thread. 
+\subsection{Wing Visualizer: Mihály Lengyel}
+This module provides means of visualization of the optimization results, namely the shape of the designed wing. It's a subclass of the JPanel class, so it's easily included and displayed in the GUI. It's only provided interface is used to update the currently displayed wing shape.
+\subsection{GUI: Jacek Czyrnek}
+The GUI connects the rest of the software system together and provides a user interface. It requires interfaces from every other module of the system.
 \pagebreak
 
 \section{Class diagram}
-In the following diagram you can see, that the classes in the implemented system are simple reflections of the component design above.
+In the following diagram you can see, that the classes in the implemented system are simple reflections of the component design above.\\
 \begin{figure}[h!]
 \includegraphics[width=\textwidth]{ClassModel.jpg}
 \caption{Class diagram}
 \end{figure}
 \pagebreak
 \section{Sequence diagram}
-To complement the static diagrams above here we provide a diagram to show the dynamic behaviour of the system. This is not an exact sequence diagram but it shows the flow of data through the system.
+To complement the static diagrams above here we provide a diagram to show the dynamic behaviour of the system. This is not an exact sequence diagram but it shows the flow of data through the system.\\
 \begin{figure}[h!]
 \includegraphics[width=\textwidth]{SequenceModel.jpg}
 \caption{Sequence diagram}
-\end{figure}
+\end{figure}\\
+\paragraph*{}
+As the diagram shows, the main operation of the system starts when the user logs into or creates a session. The previous session data is read from the database and returned as a Session object. The GUI then starts the session using the AstralConnector, which then runs in a different thread. This thread then continuously reads and logs the results using the Session which saves it in the Database. Meanwhile the GUI continues to display and in the display loop it reads the results from the running Session and updates the UI including the WingVisualizer. The GUI stops the running session using through the AstralConnector.
 
 \chapter{Implementation}
+
 \subsection{Database}
 We used the SQLite single file database solution as our database, and for it to work with our JAVA application we used the open-source SQLite JDBC driver \cite{WWW:SQLite}.
 
@@ -165,6 +180,9 @@ It is based on the previously mentioned NASA air foil simulation educational JAV
 
 \subsubsection{Optimizer}
 The optimizer is also part of the remote program. It takes parameter intervals for the wing geometrics and optimizes the lift drag ratio between those intervals returning the optimized wing geometrics. It also logs whenever a better solution is found.
+
+
+\chapter{System testing}
 
 \chapter{Failure case studies}
 In this chapter we are going to write about the various failures that can occur during execution of the program and the way they can be avoided or repaired.
@@ -200,6 +218,7 @@ Before the computation could start the program needs to copy the computing part 
 This group project was a good exercise to make us use all the knowledge we gathered throughout the last semester, and provided a quick introduction into making a complete product through teamwork.
 
 We used JAVA programming language and technologies to implement our solution.
+
 \begin{flushleft}
 	\bibliographystyle{newapa}
 	\bibliography{bibliography}
