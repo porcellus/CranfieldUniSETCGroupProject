@@ -137,7 +137,7 @@ Speed & To use a cluster for solving the equation \\
 \section{Further information}
 An example has been given for the software user interface. With the functionalities required, the final product should have two "pages", one for the connection or creation of a session, and another one once logged in a session, as the mock-ups below:\\
 \begin{figure}[h!]
-\includegraphics[scale=0.5]{group_project_mockups.png}
+\includegraphics[width=0.9\textwidth]{group_project_mockups.png}
 \caption{Mock-up}
 \end{figure}
 
@@ -184,6 +184,7 @@ As the diagram shows, the main operation of the system starts when the user logs
 
 \chapter{Implementation}
 \label{ch:impl}
+This chapter is about how made the requirements and the design into a working software. For implementation we used JAVA programming language and the Netbeans IDE. For revision control we used github. Our project is accessible at: \url{https://github.com/porcellus/CranfieldUniSETCGroupProject}. We build our code against the Java Development Kit version 1.7. Other libraries used will be mentioned in their relevant sections.
 
 \section{Database}
 We used the SQLite single file database solution as our database, and for it to work with our JAVA application we used the open-source SQLite JDBC driver \cite{WWW:SQLite}.
@@ -204,13 +205,25 @@ It is based on the previously mentioned NASA air foil simulation educational JAV
 \subsubsection{Optimizer}
 The optimizer is also part of the remote program. It takes parameter intervals for the wing geometrics and optimizes the lift drag ratio between those intervals returning the optimized wing geometrics. It also logs whenever a better solution is found.
 
+\section{Wing visualiser}
+The panel that displays the image of the wing and the surrounding air flow is based also on the NASA applet \cite{WWW:NASA}. We extracted the minimal amount of code from that project to display the wing properly. It is then included in the main GUI frame as a panel.
+
 \section{GUI}
-All mentioned modules work behind the graphical user interface build from the components of Swing widget toolkit. It consists of the main frame controlling visibility and interacting in between login/session creation dialog, parameters input dialog and session panel. The JFreeChart library \citep{WWW:JFreeChart} has been used to generate chart representing the lift-to-drag ratio.
+All mentioned modules work behind the graphical user interface build from the components of Swing widget toolkit. It consists of the main frame controlling visibility and interacting in between login/session creation dialog, parameters input dialog and session panel. The JFreeChart library \cite{WWW:JFreeChart} has been used to generate chart representing the lift-to-drag ratio.
 
 \chapter{System testing}
 \label{ch:test}
 \section{Unit testing}
 For unit testing we used the most obvious choice regarding JAVA software, the JUnit package. It is included in several JAVA enabled IDE (Eclipse, Netbeans). It enabled us to test most classes of the system. Luckily most of our modules connected through interfaces so when testing a particular class that uses other classes from other packages, we just implemented a small stub version of the external classes. With them we could concentrate the testing to our actual unit.
+
+\section{User interface testing}
+As most of the user interface elements requires actual user input we omitted unit testing of these part as they cannot be automated with our current tool set.  Instead we used manual testing of these components. We tested the input fields for malformed, corrupted and missing inputs. Tested every dialog for cancellation as well.
+
+\section{Validating the solver}
+As the solver component came from external source we assumed that proper testing was done on their so we only validated our stripped down version of the solver against the full applet manually. We gave the same parameters to the applet and to our solver and compared the results.
+
+\section{Database testing}
+Because the SQLite database does not have any server-like interface, only an API, we checked the results of our database calls with an external tool: SQLiteBrowser \cite{WWW:SQLiteBr}. With this tool we could see inside every table and every record of the created database to check if our calls are working.
 
 \chapter{Failure case studies}
 \label{ch:fail}
@@ -275,6 +288,5 @@ Here is a quick list to demonstrate which lectures were relevant in the making o
 	\bibliography{bibliography}
 	\addcontentsline{toc}{chapter}{References}
 \end{flushleft}
-
 
 \end{document}
