@@ -47,4 +47,32 @@ public class OptimizationResult {
                " Lift="+f.format(lift)+" Drag="+f.format(drag)+
                " LD="+f.format(getLiftDrag());
     }
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OptimizationResult other = (OptimizationResult) obj;
+		if (Double.doubleToLongBits(angle) != Double
+				.doubleToLongBits(other.angle))
+			return false;
+		if (Double.doubleToLongBits(camber) != Double
+				.doubleToLongBits(other.camber))
+			return false;
+		if (Double.doubleToLongBits(drag) != Double
+				.doubleToLongBits(other.drag))
+			return false;
+		if (Double.doubleToLongBits(lift) != Double
+				.doubleToLongBits(other.lift))
+			return false;
+		if (Double.doubleToLongBits(thickness) != Double
+				.doubleToLongBits(other.thickness))
+			return false;
+		return true;
+	}
 }

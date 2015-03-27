@@ -251,4 +251,17 @@ public class SQLiteConnection implements SessionControl{
         }
         return -1;
     }
+	
+	public void close()
+	{
+        if (c != null) {
+            try
+			{
+				c.close();
+			} catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+        }
+	}
 }

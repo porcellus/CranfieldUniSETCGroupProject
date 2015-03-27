@@ -7,6 +7,7 @@ package session;
 
 import database.SQLiteConnection;
 import database.SessionControl;
+
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -133,4 +134,49 @@ public class Session implements SessionInfo, Logging {
         this.minthickness=minthickness;
         this.maxthickness=maxthickness;
     }
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Session other = (Session) obj;
+		if (id != other.id)
+			return false;
+		if (Double.doubleToLongBits(maxangle) != Double
+				.doubleToLongBits(other.maxangle))
+			return false;
+		if (Double.doubleToLongBits(maxcamber) != Double
+				.doubleToLongBits(other.maxcamber))
+			return false;
+		if (Double.doubleToLongBits(maxthickness) != Double
+				.doubleToLongBits(other.maxthickness))
+			return false;
+		if (Double.doubleToLongBits(minangle) != Double
+				.doubleToLongBits(other.minangle))
+			return false;
+		if (Double.doubleToLongBits(mincamber) != Double
+				.doubleToLongBits(other.mincamber))
+			return false;
+		if (Double.doubleToLongBits(minthickness) != Double
+				.doubleToLongBits(other.minthickness))
+			return false;
+		if (name == null)
+		{
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (password == null)
+		{
+			if (other.password != null)
+				return false;
+		} else if (!password.equals(other.password))
+			return false;
+		return true;
+	}
 }
