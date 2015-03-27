@@ -261,51 +261,56 @@ public class SessionPanel extends JPanel implements ActionListener
 				if(firstIteration < 0)
 					firstIteration = 0;
 				
-				System.out.println(firstIteration);
-				System.out.println(lastIteration);
-				
-				JFrame parentFrame = new JFrame();
-				
-				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setDialogTitle("Save the logs...");  
-				fileChooser.setSelectedFile(new File(session.getSessionName() + " logs.txt"));
-				
-				int userSelection = fileChooser.showSaveDialog(parentFrame);
-				 
-				if (userSelection == JFileChooser.APPROVE_OPTION) {
-				    File fileToSave = fileChooser.getSelectedFile();
-			    
-					try
-					{
-						String logs = session.getLogToString(firstIteration, lastIteration);
-						
-						
-						PrintWriter writer = new PrintWriter(fileToSave.getAbsolutePath(), "UTF-8");
-						// TODO: print logs to file
-						writer.println("SessionName: " + session.getSessionName());
-						writer.println("MinAngle: " + session.getMinangle());
-						writer.println("MaxAngle: " + session.getMaxangle());
-						writer.println("MinThickness: " + session.getMinthickness());
-						writer.println("MaxThickness: " + session.getMaxthickness());
-						writer.println("MinCamber: " + session.getMincamber());
-						writer.println("MaxCamber: " + session.getMaxcamber());
-						writer.println();
-						writer.print(logs);
-						writer.close();
-						
-						JOptionPane.showMessageDialog(new JFrame(),
-							    "The last " + (lastIteration - firstIteration)
-							    + " logs have been successfully saved to "
-							    + fileToSave.getName() + ".",
-							    "Logs saved",
-							    JOptionPane.INFORMATION_MESSAGE);
-	
-					} catch (IOException ex)
-					{
-						JOptionPane.showMessageDialog(new JFrame(),
-							    ex.getMessage(),
-							    "Error while saving",
-							    JOptionPane.ERROR_MESSAGE);  
+				if((lastIteration - firstIteration) == 0)
+					JOptionPane.showMessageDialog(new JFrame(),
+						    "There are no logs available.",
+						    "Logs not found",
+						    JOptionPane.WARNING_MESSAGE);
+				else
+				{
+					JFrame parentFrame = new JFrame();
+					
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setDialogTitle("Save the logs...");  
+					fileChooser.setSelectedFile(new File(session.getSessionName() + " logs.txt"));
+					
+					int userSelection = fileChooser.showSaveDialog(parentFrame);
+					 
+					if (userSelection == JFileChooser.APPROVE_OPTION) {
+					    File fileToSave = fileChooser.getSelectedFile();
+				    
+						try
+						{
+							String logs = session.getLogToString(firstIteration, lastIteration);
+							
+							
+							PrintWriter writer = new PrintWriter(fileToSave.getAbsolutePath(), "UTF-8");
+							// TODO: print logs to file
+							writer.println("SessionName: " + session.getSessionName());
+							writer.println("MinAngle: " + session.getMinangle());
+							writer.println("MaxAngle: " + session.getMaxangle());
+							writer.println("MinThickness: " + session.getMinthickness());
+							writer.println("MaxThickness: " + session.getMaxthickness());
+							writer.println("MinCamber: " + session.getMincamber());
+							writer.println("MaxCamber: " + session.getMaxcamber());
+							writer.println();
+							writer.print(logs);
+							writer.close();
+							
+							JOptionPane.showMessageDialog(new JFrame(),
+								    "The last " + (lastIteration - firstIteration)
+								    + " logs have been successfully saved to "
+								    + fileToSave.getName() + ".",
+								    "Logs saved",
+								    JOptionPane.INFORMATION_MESSAGE);
+		
+						} catch (IOException ex)
+						{
+							JOptionPane.showMessageDialog(new JFrame(),
+								    ex.getMessage(),
+								    "Error while saving",
+								    JOptionPane.ERROR_MESSAGE);  
+						}
 					}
 				}
 			}

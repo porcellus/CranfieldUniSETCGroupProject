@@ -24,7 +24,7 @@ public class SQLiteConnection implements SessionControl{
         try {
             Class.forName("org.sqlite.JDBC");//use sqlite-jdbc jar in library repository
             //db and tables creation if not already existing
-            c = DriverManager.getConnection("jdbc:sqlite:test.db");
+            c = DriverManager.getConnection("jdbc:sqlite:data.db");
             stmt = c.createStatement();
             String sql = "CREATE TABLE IF NOT EXISTS SESSION " +
                          "(ID INTEGER PRIMARY KEY AUTOINCREMENT," +

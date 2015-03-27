@@ -1,0 +1,160 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+
+\includegraphics[width=55 mm]{manualCranfieldUniversityLogo.png}~\\[5cm]
+
+
+
+
+% Title
+{ \huge \bfseries LiftDrag \\[0.4cm] }
+\textsc{\Large User Manual}\\[2cm]
+
+% Author and supervisor
+\noindent
+\begin{flushleft} \large
+\emph{Authors:}\\
+Jacek \textsc{Czyrnek}\\
+Adam \textsc{Koleszar}\\
+Marion \textsc{Le Guével}\\
+Mihaly \textsc{Lengyel}\\
+\end{flushleft}
+
+
+\vfill
+
+% Bottom of the page
+{\large \today}
+
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+\section{Introduction}
+The purpose of this user manual is to provide instructions on installation, execution and usage of DragLift program as well as brief information about its operation.
+
+DragLift has been developed as an group project application for calculating fluid forces of lift and drag applied to a wing and areofoil optimisation. It allows the user to create the session with specified input parameters and secure it with password. Upon logging the application sends the optimizer authored by NASA to Astral cluster platform located on Cranfield University campus and awaits the results to present them in the form of text logs, wing visualiser and Lift/Drag function chart. The application allows the user to save the logs to text file. The logs and session information are stored in local SQL database. The application can be run on any operating system supporting Java Virtual Machine.
+
+The input parameters used in the application are minimum and maximum values of angle of attack (in degrees), thickness and camber of chord (in percentages). The nomenclature is presented below.
+\begin{figure}[h!]
+	\centering
+\includegraphics[width=0.8\textwidth]{manualWingProfile.png}\\
+\caption{Wing profile nomenclature}
+\end{figure}
+
+\section{Requirements}
+\paragraph{Java SE Runtime Environment 8}\mbox{}\\
+For successful execution of the application the user is required to install Java SE Runtime Environment 8. Head for the link below to download lastest version of JRE from Oracle suitable for your platform.
+\newline
+
+\url{http://www.oracle.com/technetwork/java/javase/downloads/}
+
+\paragraph{Astral access}\mbox{}\\
+The computation is conducted on Astral clusters, therefore the access for this platform is required. To log in the system standard Cranfield credentials are needed. If you are not registered for the Astral service, head to IT Department (Building 63, Cranfield Campus) to request access.
+
+\paragraph{Zip file archiver}\mbox{}\\
+The executables have been packed to the Zip archive. To unpack it a suitable unpacking tool is required.
+
+\section{Installation and execution}
+To prepare the program for execution unpack LiftDrag.zip to desired location. Make sure that all of its contents have been unpacked to the same location. Do not change the structure of unpacked folders and files.
+
+\begin{figure}[h!]
+	\centering
+\includegraphics[width=0.9\textwidth]{manualUnpacked.png}\\
+\caption{Unpacked content - LdOpt folder and LiftDrag.jar file}
+\end{figure}
+
+\paragraph{Windows}\mbox{}\\
+To start the application double-click LiftDrag.jar file. If asked how to open the file, choose ``Java(TM) Platform SE Library''.
+
+\begin{figure}[h!]
+	\centering
+\includegraphics[width=0.9\textwidth]{manualOpenWith.png}\\
+\caption{Choosing Java Platform to open .jar file}
+\end{figure}
+
+\paragraph{Linux}\mbox{}\\
+To start the application run a console command below from the unpacked files location.
+\newline
+
+java -jar LiftDrag.jar
+
+\section{Using the program}
+This section of manual will present the functions of the application running on Windows, however, the instructions is applicable to any operating system meeting the requirements specified before.
+
+\subsection{Creating session}
+The login dialog should open upon execution of the application. To create new session write a desired session name and password to protect the session from unauthorised access. After filling the text fields click ``Create'' button to continue.
+
+\begin{figure}[h!]
+	\centering
+\includegraphics[width=0.4\textwidth]{manualCreateSession.png}\\
+\caption{Creating new session}
+\end{figure}
+
+The creation of new session can be denied if a chosen name have been already used for another session, otherwise, the parameters dialog will be displayed.
+The default values shown on loading the window are boundary. The user is free to narrow the difference between minimum and maximum values according to needs. The program will ask for correction if minimum values exceed maximum values.
+When finished press ``OK'' button.
+	
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.4\textwidth]{manualParameters.png}\\
+\caption{Adjusting parameters}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.4\textwidth]{manualSessionCreated.png}\\
+\caption{Message confirming session creation}
+\end{figure}
+
+Succesful creation will result in confirming message.
+
+\subsection{Logging to session}
+
+Once the session is created, login dialog will reappear. To login to newly created session write its name and password to suitable textfields and press ``Open'' button. Should the password be incorrect, the access will be denied.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.4\textwidth]{manualAstral.PNG}\\
+\caption{Logging to Astral}
+\end{figure}
+
+\subsection{Managing session}
+
+On successful login to session Astral login dialog will ask for Cranfield credentials. Fill username and password fields and press ``OK'' button to continue.
+
+The session panel consists of text field containing session parameters on start, wing visualiser and line chart representing Lift-to-Drag ratio. Two status indicators will inform user of the process. The session will start automatically. The connection status indicator will flash while the application connects to Astral. Upon receiving first results the computation status indicator will light up and the text area will start printing logs from the session. The visualiser and the chart will represent the data in-progress.
+
+To finish the session press ``Logout'' button to return to login dialog or exit the program.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{manualsessionPanel.PNG}\\
+\caption{Session attempting to connect to Astral}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{manualsessionWorking.PNG}\\
+\caption{Session in progress}
+\end{figure}
+
+\subsection{Saving results}
+
+The application allows user to save up to 100 logs of the computation to text file. To save the results of the session press ``Download logs'' button. In newly opened windows specify the file location and name and press ``Save'' button. The confirmation dialog will appear upon successful download.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.6\textwidth]{manualSaveLogs.PNG}\\
+\caption{Choosing location for logs}
+\end{figure}
+
+\end{document}
